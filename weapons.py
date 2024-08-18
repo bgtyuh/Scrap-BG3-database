@@ -37,6 +37,7 @@ def init_db():
         price TEXT,
         special TEXT,
         description TEXT,
+        localisation TEXT,
         image_path TEXT,
         url TEXT
     )
@@ -64,7 +65,6 @@ def download_image(img_url, img_path):
         print(f"Image downloaded: {img_path}")
     else:
         pass
-        # print(f"Image already exists, skipping download: {img_path}")
 
 # Fonction pour scraper les armes et leurs propriétés d'une page donnée
 def scrape_weapon_and_details(weapon_url, name_tag, cols, cursor):
@@ -93,13 +93,23 @@ def scrape_weapon_and_details(weapon_url, name_tag, cols, cursor):
         download_image(img_url, main_image_path)
 
     description_tag = soup.find('div', class_='mw-parser-output').find('p')
-    description = description_tag.get_text(strip=True) if description_tag else "No description available"
+    description = description_tag.get_text(strip=True, separator=" ") if description_tag else "No description available"
 
-    # Insertion des informations de base dans la table weapons, y compris la description et l'image principale
+    # Extraire la localisation
+    localisation = ""
+    localisation_section = soup.find('h2', string=lambda x: x and 'Where to find' in x)
+    if localisation_section:
+        next_div = localisation_section.find_next('div', class_='bg3wiki-tooltip-box')
+        if next_div:
+            locations = [li.get_text() for li in next_div.find_all('li')]
+            localisation = "\n\n".join(locations)
+
+    # Insertion des informations de base dans la table weapons, y compris la localisation
     cursor.execute('''
-    INSERT INTO weapons (name, enchantment, damage, damage_type, weight, price, special, description, image_path, url)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (name, enchantment, damage, damage_type, weight, price, special, description, main_image_path, full_weapon_url))
+    INSERT INTO weapons (name, enchantment, damage, damage_type, weight, price, special, description, localisation, image_path, url)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (name, enchantment, damage, damage_type, weight, price, special, description, localisation, main_image_path, full_weapon_url))
+
     weapon_id = cursor.lastrowid
 
     # Scraper les propriétés détaillées de l'arme
