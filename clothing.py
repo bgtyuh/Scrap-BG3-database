@@ -1,189 +1,282 @@
 import os
-import sqlite3
 import requests
 from bs4 import BeautifulSoup
-
-# Connexion à la base de données SQLite (ou création si elle n'existe pas)
-conn = sqlite3.connect('bg3_clothing.db')
-cursor = conn.cursor()
-
-# Suppression des tables si elles existent déjà
-cursor.execute('DROP TABLE IF EXISTS clothing_properties')
-cursor.execute('DROP TABLE IF EXISTS clothing')
-
-# Création des tables
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS clothing (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    weight TEXT,
-    price TEXT,
-    effects TEXT,
-    description TEXT,
-    image_path TEXT,
-    url TEXT
-)
-''')
-
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS clothing_properties (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    clothing_id INTEGER,
-    property_name TEXT,
-    property_value TEXT,
-    image_path TEXT,
-    FOREIGN KEY (clothing_id) REFERENCES clothing(id)
-)
-''')
+import sqlite3
 
 # Créer un dossier pour stocker les images si ce n'est pas déjà fait
-image_folder = "clothing_images"
-if not os.path.exists(image_folder):
-    os.makedirs(image_folder)
+image_folder = 'clothing_images'
+os.makedirs(image_folder, exist_ok=True)
 
-# URL de la page des vêtements
-base_url = "https://bg3.wiki"
-url = f"{base_url}/wiki/Clothing"
-response = requests.get(url)
-soup = BeautifulSoup(response.text, 'html.parser')
 
-# Fonction pour télécharger une image uniquement si elle n'existe pas déjà
-def download_image(img_url, img_path):
+# Fonction pour télécharger une image si elle n'existe pas déjà
+def download_image(img_url, folder, filename):
+    img_path = os.path.join(folder, filename)
     if not os.path.exists(img_path):
-        img_response = requests.get(img_url)
-        with open(img_path, 'wb') as img_file:
-            img_file.write(img_response.content)
-        print(f"Image downloaded: {img_path}")
-    else:
-        pass
+        response = requests.get(img_url, stream=True)
+        if response.status_code == 200:
+            with open(img_path, 'wb') as file:
+                for chunk in response:
+                    file.write(chunk)
+        else:
+            print(f"Erreur de téléchargement: {img_url}")
 
-# Fonction pour scraper les vêtements et leurs propriétés d'une page donnée
-def scrape_clothing_and_details(item_url, name_tag, cols, cursor):
-    name = name_tag.get('title')
-    full_item_url = f"{base_url}{item_url}"
 
-    weight = cols[1].get_text(strip=True, separator=" ")
-    price = cols[2].get_text(strip=True, separator=" ")
-    effects = cols[3].get_text(strip=True, separator=" ")
+# Fonction personnalisée pour rechercher un élément contenant un certain texte
+def find_li_by_text(soup, text):
+    for li in soup.find_all('li'):
+        if text in li.get_text(strip=True):
+            return li
+    return None
 
-    # Scraper la page du vêtement pour obtenir la description et l'image principale
-    response = requests.get(full_item_url)
-    soup = BeautifulSoup(response.text, 'html.parser')
 
-    # Récupération de l'image principale (300x300 px)
-    main_image_tag = soup.find('img', src=lambda x: x and '300px' in x)
-    main_image_path = None
-    if main_image_tag:
-        img_url = base_url + main_image_tag['src']
-        img_name = os.path.basename(img_url)
-        main_image_path = os.path.join(image_folder, img_name)
+# Connexion à la base de données SQLite
+conn = sqlite3.connect('bg3_clothing.db')
+c = conn.cursor()
 
-        download_image(img_url, main_image_path)
+# Suppression des tables si elles existent déjà pour garantir une base de données propre
+c.execute('DROP TABLE IF EXISTS Items')
+c.execute('DROP TABLE IF EXISTS Specials')
+c.execute('DROP TABLE IF EXISTS Locations')
 
-    description_tag = soup.find('div', class_='mw-parser-output').find('p')
-    description = description_tag.get_text(strip=True) if description_tag else "No description available"
+# Création des tables
+c.execute('''
+CREATE TABLE IF NOT EXISTS Items (
+    item_id TEXT PRIMARY KEY,
+    name TEXT,
+    description TEXT,
+    rarity TEXT,
+    weight_kg REAL,
+    weight_lb REAL,
+    price_gp REAL,
+    armour_class_base INTEGER,
+    armour_class_modifier TEXT,
+    uid TEXT,
+    image_path TEXT
+)
+''')
 
-    # Insertion des informations de base dans la table clothing, y compris la description et l'image principale
-    cursor.execute('''
-    INSERT INTO clothing (name, weight, price, effects, description, image_path, url)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-    ''', (name, weight, price, effects, description, main_image_path, full_item_url))
-    clothing_id = cursor.lastrowid
+c.execute('''
+CREATE TABLE IF NOT EXISTS Specials (
+    special_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    item_id TEXT,
+    type TEXT,
+    name TEXT,
+    effect TEXT,
+    image_path TEXT,
+    FOREIGN KEY (item_id) REFERENCES Items (item_id)
+)
+''')
 
-    # Ajout de la propriété "Type" avec la valeur "Clothing" et image_path
-    cursor.execute('''
-    INSERT INTO clothing_properties (clothing_id, property_name, property_value, image_path)
-    VALUES (?, ?, ?, ?)
-    ''', (clothing_id, "Type", "Clothing", main_image_path))
+c.execute('''
+CREATE TABLE IF NOT EXISTS Locations (
+    location_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    item_id TEXT,
+    description TEXT,
+    image_path TEXT,
+    FOREIGN KEY (item_id) REFERENCES Items (item_id)
+)
+''')
 
-    # Scraper les propriétés détaillées du vêtement sous "Properties"
-    properties_section = soup.find('div', class_='bg3wiki-property-list')
-    if properties_section:
-        for li in properties_section.find_all('li'):
-            # Séparer le nom de la propriété et sa valeur
-            property_text = li.get_text(strip=True, separator=" ")
-            if ":" in property_text:
-                property_name, property_value = property_text.split(":", 1)
+# URL de la page Clothing
+clothing_url = "https://bg3.wiki/wiki/Clothing"
+
+# Requête pour obtenir le contenu de la page
+response = requests.get(clothing_url)
+if response.status_code == 200:
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    base_url = "https://bg3.wiki"
+
+    # Extraction des liens vers chaque page de vêtement avec une image de taille 50x50
+    clothing_links = []
+    for a in soup.select('table.wikitable a'):
+        img = a.find('img')
+        if a['href'].startswith('/wiki/') and img and img.get('width') == '50' and img.get('height') == '50':
+            clothing_links.append(base_url + a['href'])
+
+    # Itérer sur chaque lien de vêtement pour scraper les données
+    for clothing_url in clothing_links:
+        response = requests.get(clothing_url)
+        if response.status_code == 200:
+            clothing_soup = BeautifulSoup(response.content, 'html.parser')
+
+            # Extraction des données
+            name = clothing_soup.find('h1', id='firstHeading').get_text(strip=True, separator=" ")
+
+            # Vérification si l'élément description existe avant d'appeler get_text()
+            description_element = clothing_soup.find('div', class_='bg3wiki-blockquote-text')
+            description = description_element.get_text(strip=True, separator=" ") if description_element else ""
+
+            # Télécharger l'image principale (floatright)
+            main_image = clothing_soup.find('img', alt=name + ' image')
+            if main_image and main_image['src']:
+                img_url = base_url + main_image['src']
+                img_filename = os.path.basename(main_image['src'])
+                download_image(img_url, image_folder, img_filename)
+                image_path = os.path.join(image_folder, img_filename)
             else:
-                property_name = property_text
-                property_value = None
+                image_path = None
 
-            property_image_paths = []
-            img_tags = li.find_all('img')
-            for img_tag in img_tags:
-                img_url = base_url + img_tag['src']
-                img_name = os.path.basename(img_url)
-                img_path = os.path.join(image_folder, img_name)
-                download_image(img_url, img_path)
-                property_image_paths.append(img_path)
+            # Rareté
+            rarity_element = find_li_by_text(clothing_soup, 'Rarity:')
+            rarity = rarity_element.get_text(strip=True, separator=" ").split(':')[
+                -1].strip() if rarity_element else 'Unknown'
 
-            cursor.execute('''
-            INSERT INTO clothing_properties (clothing_id, property_name, property_value, image_path)
-            VALUES (?, ?, ?, ?)
-            ''', (clothing_id, property_name.strip(), property_value.strip() if property_value else None, ','.join(property_image_paths)))
+            # Poids
+            weight_element = find_li_by_text(clothing_soup, 'Weight:')
+            if weight_element:
+                weight = weight_element.get_text(strip=True, separator=" ").split(':')[-1].strip().split('/')
+                weight_kg = float(weight[0].strip().split(' ')[0].replace('kg', '').strip())
+                weight_lb = float(weight[1].strip().split(' ')[0].replace('lb', '').strip())
+            else:
+                weight_kg = weight_lb = 0.0
 
-    # Scraper les actions spéciales sous "Special"
-    special_section = soup.find('h3', id="Special")
-    if special_section:
-        special_list = special_section.find_next('ul')
-        for li in special_list.find_all('li'):
-            action_name = li.get_text(strip=True, separator=" ")
-            action_image_paths = []
+            # Traitement du prix
+            price_element = find_li_by_text(clothing_soup, 'Price:')
+            if price_element:
+                price_text = price_element.get_text(strip=True, separator=" ").split(':')[-1].strip().replace('gp',
+                                                                                                              '').strip()
 
-            img_tags = li.find_all('img')
-            for img_tag in img_tags:
-                img_url = base_url + img_tag['src']
-                img_name = os.path.basename(img_url)
-                img_path = os.path.join(image_folder, img_name)
-                download_image(img_url, img_path)
-                action_image_paths.append(img_path)
+                # Vérifier si le prix contient deux valeurs (par exemple, "800 / 1050 H Honour")
+                if '/' in price_text:
+                    normal_price, honour_price = price_text.split('/')
+                    # Extraire uniquement la partie avant la barre (prix normal)
+                    price_gp = float(normal_price.strip())
+                else:
+                    # Si une seule valeur est présente
+                    price_gp = float(price_text)
+            else:
+                price_gp = 0.0  # Valeur par défaut si aucun prix n'est trouvé
 
-            cursor.execute('''
-            INSERT INTO clothing_properties (clothing_id, property_name, property_value, image_path)
-            VALUES (?, ?, ?, ?)
-            ''', (clothing_id, action_name, None, ','.join(action_image_paths)))
+            # Classe d'armure
+            armour_class_base_element = clothing_soup.find('div', class_='ac-value')
+            armour_class_base = int(
+                armour_class_base_element.get_text(strip=True, separator=" ")) if armour_class_base_element else 0
 
-    # Scraper les propriétés UID et UUID et inclure image_path si une image est associée
-    for details in soup.find_all('details', class_='bg3wiki-uid'):
-        property_name = details.find('summary').get_text(strip=True)
-        property_value = details.find('tt').get_text(strip=True)
-        cursor.execute('''
-        INSERT INTO clothing_properties (clothing_id, property_name, property_value, image_path)
-        VALUES (?, ?, ?, ?)
-        ''', (clothing_id, property_name, property_value, None))
+            armour_class_modifier_element = clothing_soup.find('div', class_='ac-value-comment')
+            armour_class_modifier = armour_class_modifier_element.get_text(strip=True,
+                                                                           separator=" ") if armour_class_modifier_element else 'None'
 
-# Fonction pour scraper les vêtements d'une page donnée
-def scrape_clothing_page(url, cursor):
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
+            # UID et UUID
+            uid_element = clothing_soup.find_all('tt')
+            uid = uid_element[0].get_text(strip=True, separator=" ") if uid_element else 'Unknown UID'
+            uuid = uid_element[1].get_text(strip=True, separator=" ") if len(uid_element) > 1 else 'Unknown UUID'
 
-    seen_items = set()
-
-    for table in soup.find_all('table', class_='wikitable sortable'):
-        for row in table.find_all('tr')[1:]:
-            cols = row.find_all('td')
-            if len(cols) < 4:
+            # Vérifier si l'item existe déjà dans la base de données
+            c.execute('SELECT COUNT(*) FROM Items WHERE item_id = ?', (uuid,))
+            if c.fetchone()[0] > 0:
+                print(f"L'item {name} avec l'UID {uuid} existe déjà. Ignoré.")
                 continue
 
-            name_tag = cols[0].find('a')
-            if not name_tag or 'title' not in name_tag.attrs:
-                continue
+            # Insertion des données dans la table Items
+            c.execute('''
+            INSERT INTO Items (item_id, name, description, rarity, weight_kg, weight_lb, price_gp, armour_class_base, armour_class_modifier, uid, image_path)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (
+            uuid, name, description, rarity, weight_kg, weight_lb, price_gp, armour_class_base, armour_class_modifier,
+            uid, image_path))
 
-            name = name_tag.get('title')
-            if name in seen_items:
-                continue
+            # Extraction des effets spéciaux des <dl>, <ul> et autres éléments après "Special"
+            specials_section = clothing_soup.find('h3', string="Special")
+            if specials_section:
+                # Suivre les éléments pertinents après le <h3> "Special"
+                next_elem = specials_section.find_next_sibling()
+                while next_elem and next_elem.name not in ['h2', 'h3']:  # Arrêter au prochain titre de section
+                    # Gérer les <div> avec les listes d'effets spéciaux
+                    if next_elem.name == 'div' and 'bg3wiki-tablelist' in next_elem.get('class', []):
+                        for dl in next_elem.find_all('dl'):
+                            special_name = dl.find('dt').get_text(strip=True, separator=" ") if dl.find(
+                                'dt') else 'Unknown Special'
+                            special_effect = dl.find('dd').get_text(strip=True, separator=" ") if dl.find(
+                                'dd') else 'Unknown Effect'
 
-            seen_items.add(name)
-            item_url = name_tag.get('href')
+                            # Télécharger les icônes des effets spéciaux
+                            icon = dl.find('img')
+                            special_image_path = None
+                            if icon and icon['src']:
+                                special_img_url = base_url + icon['src']
+                                special_img_filename = os.path.basename(icon['src'])
+                                download_image(special_img_url, image_folder, special_img_filename)
+                                special_image_path = os.path.join(image_folder, special_img_filename)
 
-            # Scraper le vêtement et ses propriétés
-            scrape_clothing_and_details(item_url, name_tag, cols, cursor)
+                            c.execute('''
+                            INSERT INTO Specials (item_id, type, name, effect, image_path)
+                            VALUES (?, ?, ?, ?, ?)
+                            ''', (uuid, "Special", special_name, special_effect, special_image_path))
 
-# Scraping des vêtements depuis la page listée
-scrape_clothing_page(url, cursor)
+                    # Gérer les <ul> avec des effets comme "Armour Class +1"
+                    elif next_elem.name == 'ul':
+                        for li in next_elem.find_all('li'):
+                            special_effect = li.get_text(strip=True, separator=" ")
 
-# Validation des transactions et fermeture de la connexion
-conn.commit()
+                            if special_effect:
+                                # Télécharger les icônes associées
+                                icon = li.find('img')
+                                bonus_image_path = None
+                                if icon and icon['src']:
+                                    bonus_img_url = base_url + icon['src']
+                                    bonus_img_filename = os.path.basename(icon['src'])
+                                    download_image(bonus_img_url, image_folder, bonus_img_filename)
+                                    bonus_image_path = os.path.join(image_folder, bonus_img_filename)
+
+                                c.execute('''
+                                INSERT INTO Specials (item_id, type, name, effect, image_path)
+                                VALUES (?, ?, ?, ?, ?)
+                                ''', (uuid, "Bonus", "Special Effect", special_effect, bonus_image_path))
+
+                    # Gérer les éléments <dl> autonomes comme "Mirror Image"
+                    elif next_elem.name == 'dl':
+                        special_name = next_elem.find('dt').get_text(strip=True, separator=" ") if next_elem.find(
+                            'dt') else 'Unknown Special'
+                        special_effect = next_elem.find('dd').get_text(strip=True, separator=" ") if next_elem.find(
+                            'dd') else 'Unknown Effect'
+
+                        # Télécharger les icônes associées
+                        icon = next_elem.find('img')
+                        special_image_path = None
+                        if icon and icon['src']:
+                            special_img_url = base_url + icon['src']
+                            special_img_filename = os.path.basename(icon['src'])
+                            download_image(special_img_url, image_folder, special_img_filename)
+                            special_image_path = os.path.join(image_folder, special_img_filename)
+
+                        c.execute('''
+                        INSERT INTO Specials (item_id, type, name, effect, image_path)
+                        VALUES (?, ?, ?, ?, ?)
+                        ''', (uuid, "Special", special_name, special_effect, special_image_path))
+
+                    next_elem = next_elem.find_next_sibling()
+
+            # Extraction des emplacements "Where to find"
+            location_section = clothing_soup.find('h2', string=lambda x: x and "Where to find" in x)
+            if location_section:
+                # Trouver le <div> suivant contenant les informations
+                location_div = location_section.find_next_sibling()
+                if location_div and location_div.name == 'div' and 'bg3wiki-tooltip-box' in location_div.get('class',
+                                                                                                             []):
+                    ul_element = location_div.find('ul')
+                    if ul_element:
+                        for li in ul_element.find_all('li'):
+                            location_text = li.get_text(strip=True, separator=" ")
+
+                            # Télécharger les icônes associées
+                            icon = li.find('img')
+                            location_image_path = None
+                            if icon and icon['src']:
+                                location_img_url = base_url + icon['src']
+                                location_img_filename = os.path.basename(icon['src'])
+                                download_image(location_img_url, image_folder, location_img_filename)
+                                location_image_path = os.path.join(image_folder, location_img_filename)
+
+                            c.execute('''
+                            INSERT INTO Locations (item_id, description, image_path)
+                            VALUES (?, ?, ?)
+                            ''', (uuid, location_text, location_image_path))
+
+            # Commit après chaque vêtement pour éviter de perdre des données en cas de problème
+            conn.commit()
+
+# Fermeture de la connexion à la base de données
 conn.close()
 
-print("Base de données des vêtements créée et peuplée avec succès.")
+print("Les données ont été extraites et stockées dans la base de données avec succès.")
