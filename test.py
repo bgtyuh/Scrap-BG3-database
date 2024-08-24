@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS Weapons (
     name TEXT NOT NULL,
     rarity TEXT,
     description TEXT,
+    quote TEXT,
     weight_kg REAL,
     weight_lb REAL,
     price INTEGER,
@@ -123,8 +124,11 @@ soup = BeautifulSoup(response.content, 'html.parser')
 # Extraction des données
 weapon_name = soup.find('h1', class_='firstHeading').get_text(strip=True, separator=" ")
 
-description_tag = soup.find('div', class_='bg3wiki-blockquote-text')
-description = description_tag.get_text(strip=True, separator=" ") if description_tag else None
+description_tag = soup.find('meta', property='og:description')
+description = description_tag["content"] if description_tag else None
+
+quote_tag = soup.find('div', class_='bg3wiki-blockquote-text')
+quote = quote_tag.get_text() if quote_tag else None
 
 properties = soup.find('div', class_='bg3wiki-property-list')
 
@@ -175,9 +179,9 @@ else:
 
 # Insertion des données dans la table Weapons
 cursor.execute('''
-INSERT INTO Weapons (weapon_id, name, rarity, description, weight_kg, weight_lb, price, enchantment, type, range, attributes, uid)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-''', (weapon_id, weapon_name, rarity, description, weight_kg, weight_lb, price_gp, enchantment, 'Dagger', 1.5,
+INSERT INTO Weapons (weapon_id, name, rarity, description, quote, weight_kg, weight_lb, price, enchantment, type, range, attributes, uid)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+''', (weapon_id, weapon_name, rarity, description, quote, weight_kg, weight_lb, price_gp, enchantment, 'Dagger', 1.5,
       attributes, uid))
 
 # Extraction des informations de dégâts
@@ -235,7 +239,7 @@ if extra_damage_section:
 # Capacités spéciales
 special_abilities_section = soup.find("h3", string=lambda x: x and 'Special' in x)
 if special_abilities_section:
-    spe
+    pass
 
 # Lieux de l'arme
 location_section = soup.find("h2", string=lambda x: x and 'Where to find' in x)
