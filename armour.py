@@ -1,4 +1,7 @@
+import json
 import os
+import re
+
 import requests
 from bs4 import BeautifulSoup
 import sqlite3
@@ -121,10 +124,16 @@ if response.status_code == 200:
             else:
                 image_path = None
 
-            # Type d'armure
-            armour_type_element = find_li_by_text(armours_soup, 'Required Proficiency')
-            armour_type = armour_type_element.get_text(strip=True, separator=" ").split(':')[
-                -1].strip() if armour_type_element else 'Heavy Armour'
+            # Extraire le contenu du script contenant wgCategories
+            script_content = armours_soup.find('script').string
+            match = re.search(r'wgCategories":\s*(\[[^\]]*\])', script_content)
+            if match:
+                # Charger la liste JSON de wgCategories en tant que liste Python
+                wg_categories = json.loads(match.group(1))
+                armour_type = [item for item in wg_categories if 'Armour' in item][0] if wg_categories else None
+            else:
+                print(f"wgCategories not found for {name}.")
+                armour_type = None
 
             # Rareté
             rarity_element = find_li_by_text(armours_soup, 'Rarity:')

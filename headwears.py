@@ -1,13 +1,12 @@
-import json
 import os
-import re
-
 import requests
 from bs4 import BeautifulSoup
 import sqlite3
+import re
+import json
 
 # Créer un dossier pour stocker les images si ce n'est pas déjà fait
-image_folder = 'clothing_images'
+image_folder = 'headwear_images'
 os.makedirs(image_folder, exist_ok=True)
 
 
@@ -33,7 +32,7 @@ def find_li_by_text(soup, text):
 
 
 # Connexion à la base de données SQLite
-conn = sqlite3.connect('bg3_clothing.db')
+conn = sqlite3.connect('bg3_headwears.db')
 c = conn.cursor()
 
 # Suppression des tables si elles existent déjà pour garantir une base de données propre
@@ -53,8 +52,6 @@ CREATE TABLE IF NOT EXISTS Items (
     weight_kg REAL,
     weight_lb REAL,
     price_gp REAL,
-    armour_class_base INTEGER,
-    armour_class_modifier TEXT,
     uid TEXT,
     image_path TEXT
 )
@@ -81,41 +78,54 @@ CREATE TABLE IF NOT EXISTS Locations (
 ''')
 
 # URL de la page Clothing
-clothing_url = "https://bg3.wiki/wiki/Clothing"
+headwears_url = "https://bg3.wiki/wiki/Headwear"
 
 # Requête pour obtenir le contenu de la page
-response = requests.get(clothing_url)
+response = requests.get(headwears_url)
 if response.status_code == 200:
     soup = BeautifulSoup(response.content, 'html.parser')
 
     base_url = "https://bg3.wiki"
 
     # Extraction des liens vers chaque page de vêtement avec une image de taille 50x50
-    clothing_links = []
+    headwears_links = []
     for a in soup.select('table.wikitable a'):
         img = a.find('img')
         if a['href'].startswith('/wiki/') and img and img.get('width') == '50' and img.get('height') == '50':
-            clothing_links.append(base_url + a['href'])
+            headwears_links.append(base_url + a['href'])
 
     # Itérer sur chaque lien de vêtement pour scraper les données
-    for clothing_url in clothing_links:
-        response = requests.get(clothing_url)
+    for headwears_url in headwears_links:
+        response = requests.get(headwears_url)
         if response.status_code == 200:
-            clothing_soup = BeautifulSoup(response.content, 'html.parser')
+            headwears_soup = BeautifulSoup(response.content, 'html.parser')
 
             # Extraction des données
-            name = clothing_soup.find('h1', id='firstHeading').get_text(strip=True, separator=" ")
+            name = headwears_soup.find('h1', id='firstHeading').get_text(strip=True, separator=" ")
 
             # Vérification si l'élément quote existe avant d'appeler get_text()
-            description_element_tag = clothing_soup.find('meta', property='og:description')
+            description_element_tag = headwears_soup.find('meta', property='og:description')
             description = description_element_tag["content"] if description_element_tag else ""
 
             # Vérification si l'élément quote existe avant d'appeler get_text()
-            quote_element = clothing_soup.find('div', class_='bg3wiki-blockquote-text')
+            quote_element = headwears_soup.find('div', class_='bg3wiki-blockquote-text')
             quote = quote_element.get_text(strip=True, separator=" ") if quote_element else ""
 
+            # Extraire le contenu du script contenant wgCategories
+            script_content = headwears_soup.find('script').string
+            match = re.search(r'wgCategories":\s*(\[[^\]]*\])', script_content)
+            if match:
+                # Charger la liste JSON de wgCategories en tant que liste Python
+                wg_categories = json.loads(match.group(1))
+                # Extraire la première valeur ou toute la liste selon les besoins
+                wg_categories.remove('Bugs') if wg_categories and 'Bugs' in wg_categories else None
+                headwear_type = wg_categories[0] if wg_categories else None
+            else:
+                print(f"wgCategories not found for {name}.")
+                headwear_type = None
+
             # Télécharger l'image principale (floatright)
-            main_image = clothing_soup.find('img', alt=name + ' image')
+            main_image = headwears_soup.find('img', alt=name + ' image')
             if main_image and main_image['src']:
                 img_url = base_url + main_image['src']
                 img_filename = os.path.basename(main_image['src'])
@@ -124,26 +134,13 @@ if response.status_code == 200:
             else:
                 image_path = None
 
-            # Extraire le contenu du script contenant wgCategories
-            script_content = clothing_soup.find('script').string
-            match = re.search(r'wgCategories":\s*(\[[^\]]*\])', script_content)
-            if match:
-                # Charger la liste JSON de wgCategories en tant que liste Python
-                wg_categories = json.loads(match.group(1))
-                # Extraire la première valeur ou toute la liste selon les besoins
-                wg_categories.remove('Bugs') if wg_categories and 'Bugs' in wg_categories else None
-                clothing_type = wg_categories[0] if wg_categories else None
-            else:
-                print(f"wgCategories not found for {name}.")
-                clothing_type = None
-
             # Rareté
-            rarity_element = find_li_by_text(clothing_soup, 'Rarity:')
+            rarity_element = find_li_by_text(headwears_soup, 'Rarity:')
             rarity = rarity_element.get_text(strip=True, separator=" ").split(':')[
                 -1].strip() if rarity_element else 'Unknown'
 
             # Poids
-            weight_element = find_li_by_text(clothing_soup, 'Weight:')
+            weight_element = find_li_by_text(headwears_soup, 'Weight:')
             if weight_element:
                 weight = weight_element.get_text(strip=True, separator=" ").split(':')[-1].strip().split('/')
                 weight_kg = float(weight[0].strip().split(' ')[0].replace('kg', '').strip())
@@ -152,7 +149,7 @@ if response.status_code == 200:
                 weight_kg = weight_lb = 0.0
 
             # Traitement du prix
-            price_element = find_li_by_text(clothing_soup, 'Price:')
+            price_element = find_li_by_text(headwears_soup, 'Price:')
             if price_element:
                 price_text = price_element.get_text(strip=True, separator=" ").split(':')[-1].strip().replace('gp',
                                                                                                               '').strip()
@@ -168,17 +165,8 @@ if response.status_code == 200:
             else:
                 price_gp = 0.0  # Valeur par défaut si aucun prix n'est trouvé
 
-            # Classe d'armure
-            armour_class_base_element = clothing_soup.find('div', class_='ac-value')
-            armour_class_base = int(
-                armour_class_base_element.get_text(strip=True, separator=" ")) if armour_class_base_element else 0
-
-            armour_class_modifier_element = clothing_soup.find('div', class_='ac-value-comment')
-            armour_class_modifier = armour_class_modifier_element.get_text(strip=True,
-                                                                           separator=" ") if armour_class_modifier_element else 'None'
-
             # UID et UUID
-            uid_element = clothing_soup.find_all('tt')
+            uid_element = headwears_soup.find_all('tt')
             uid = uid_element[0].get_text(strip=True, separator=" ") if uid_element else 'Unknown UID'
             uuid = uid_element[1].get_text(strip=True, separator=" ") if len(uid_element) > 1 else 'Unknown UUID'
 
@@ -190,14 +178,14 @@ if response.status_code == 200:
 
             # Insertion des données dans la table Items
             c.execute('''
-            INSERT INTO Items (item_id, name, description, quote, type, rarity, weight_kg, weight_lb, price_gp, armour_class_base, armour_class_modifier, uid, image_path)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO Items (item_id, name, description, quote, type, rarity, weight_kg, weight_lb, price_gp, uid, image_path)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (
-            uuid, name, description, quote, clothing_type, rarity, weight_kg, weight_lb, price_gp, armour_class_base, armour_class_modifier,
+            uuid, name, description, quote, headwear_type, rarity, weight_kg, weight_lb, price_gp,
             uid, image_path))
 
             # Extraction des effets spéciaux des <dl>, <ul> et autres éléments après "Special"
-            specials_section = clothing_soup.find('h3', string="Special")
+            specials_section = headwears_soup.find('h3', string="Special")
             if specials_section:
                 # Suivre les éléments pertinents après le <h3> "Special"
                 next_elem = specials_section.find_next_sibling()
@@ -241,7 +229,7 @@ if response.status_code == 200:
                     next_elem = next_elem.find_next_sibling()
 
             # Extraction des emplacements "Where to find"
-            location_section = clothing_soup.find('h2', string=lambda x: x and "Where to find" in x)
+            location_section = headwears_soup.find('h2', string=lambda x: x and "Where to find" in x)
             if location_section:
                 # Trouver le <div> suivant contenant les informations
                 location_div = location_section.find_next_sibling()
