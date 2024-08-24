@@ -3,224 +3,343 @@ import sqlite3
 import requests
 from bs4 import BeautifulSoup
 
-# Dossier pour les images
-image_folder = "weapon_images"
+# Connexion à la base de données SQLite (ou création si elle n'existe pas)
+conn = sqlite3.connect('bg3_weapons.db')
+cursor = conn.cursor()
+
+# Suppression des tables si elles existent déjà pour garantir une base de données propre
+cursor.execute('DROP TABLE IF EXISTS Weapons')
+cursor.execute('DROP TABLE IF EXISTS Damage')
+cursor.execute('DROP TABLE IF EXISTS Special_Abilities')
+cursor.execute('DROP TABLE IF EXISTS Weapon_Actions')
+cursor.execute('DROP TABLE IF EXISTS Weapon_Locations')
+cursor.execute('DROP TABLE IF EXISTS Notes')
+
+# Création des tables
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS Weapons (
+    weapon_id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    rarity TEXT,
+    description TEXT,
+    quote TEXT,
+    weight_kg REAL,
+    weight_lb REAL,
+    price INTEGER,
+    enchantment INTEGER,
+    type TEXT,
+    range_m REAL,
+    range_f REAL,
+    attributes TEXT,
+    uid TEXT,
+    image_path TEXT
+)
+''')
+
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS Damage (
+    damage_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    weapon_id TEXT,
+    damage_dice TEXT,
+    damage_bonus INTEGER,
+    damage_total_range TEXT,
+    modifier TEXT,
+    damage_type TEXT,
+    damage_source TEXT,
+    FOREIGN KEY(weapon_id) REFERENCES Weapons(weapon_id)
+)
+''')
+
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS Special_Abilities (
+    ability_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    weapon_id TEXT,
+    name TEXT,
+    description TEXT,
+    FOREIGN KEY(weapon_id) REFERENCES Weapons(weapon_id)
+)
+''')
+
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS Weapon_Actions (
+    action_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    weapon_id TEXT,
+    name TEXT,
+    description TEXT,
+    FOREIGN KEY(weapon_id) REFERENCES Weapons(weapon_id)
+)
+''')
+
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS Weapon_Locations (
+    location_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    weapon_id TEXT,
+    location_description TEXT,
+    FOREIGN KEY(weapon_id) REFERENCES Weapons(weapon_id)
+)
+''')
+
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS Notes (
+    note_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    weapon_id TEXT,
+    note_content TEXT,
+    FOREIGN KEY(weapon_id) REFERENCES Weapons(weapon_id)
+)
+''')
+
+# Validation des changements
+conn.commit()
+
+# Créer le dossier pour les images si nécessaire
+image_folder = 'weapon_images'
 if not os.path.exists(image_folder):
     os.makedirs(image_folder)
 
-# Liens vers les pages des armes
-weapon_urls = [
-    "https://bg3.wiki/wiki/List_of_martial_weapons",
-    "https://bg3.wiki/wiki/List_of_simple_weapons"
-]
+# Fonction personnalisée pour rechercher un élément contenant un certain texte dans une balise spécifique
+def find_name_by_text(soup, name, text):
+    for balise in soup.find_all(name):
+        if text in balise.get_text(strip=True):
+            return balise
+    return None
 
-base_url = "https://bg3.wiki"
+# Fonction pour extraire les attributs entre Enchantment et Melee/Range
+def extract_attributes(properties):
+    enchantment_element = find_name_by_text(properties, 'dd', 'Enchantment:')
+    if enchantment_element:
+        attributes = []
+        next_element = enchantment_element.find_next_sibling('dd')
+        while next_element and not any(
+                keyword in next_element.get_text(strip=True) for keyword in ['Melee:', 'Range:']):
+            # Extrait le texte de l'attribut
+            attribute_text = next_element.get_text(strip=True, separator=" ")
+            attributes.append(attribute_text)
+            next_element = next_element.find_next_sibling('dd')
+        return ', '.join(attributes)
+    return None
 
-# Fonction pour initialiser la base de données
-def init_db():
-    conn = sqlite3.connect('bg3_weapons.db')
-    cursor = conn.cursor()
+# Récupération de la liste des armes
+list_url = "https://bg3.wiki/wiki/List_of_weapons"
+response = requests.get(list_url)
+soup = BeautifulSoup(response.content, 'html.parser')
+set_of_url = set()
+set_of_weapon_id = set()
 
-    # Suppression des tables si elles existent déjà
-    cursor.execute('DROP TABLE IF EXISTS weapon_properties')
-    cursor.execute('DROP TABLE IF EXISTS weapons')
+# Itération sur chaque ligne du tableau pour récupérer les armes
+rows = soup.select('table.wikitable tbody tr')
+for row in rows:
+    # Sélectionne la première cellule du tableau (contient le lien de l'arme)
+    weapon_cell = row.find('td')
+    if weapon_cell:
+        weapon_link = weapon_cell.find('a', href=True)
+        if weapon_link:
+            weapon_url = "https://bg3.wiki" + weapon_link['href']
 
-    # Création des tables
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS weapons (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        enchantment TEXT,
-        damage TEXT,
-        damage_type TEXT,
-        weight TEXT,
-        price TEXT,
-        special TEXT,
-        description TEXT,
-        localisation TEXT,
-        image_path TEXT,
-        url TEXT
-    )
-    ''')
+            if weapon_url in set_of_url:
+                continue
+            set_of_url.add(weapon_url)
 
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS weapon_properties (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        weapon_id INTEGER,
-        property_name TEXT,
-        property_value TEXT,
-        image_path TEXT,
-        FOREIGN KEY (weapon_id) REFERENCES weapons(id)
-    )
-    ''')
+            # Requête pour obtenir le contenu de la page de l'arme
+            response_weapon = requests.get(weapon_url)
+            soup_weapon = BeautifulSoup(response_weapon.content, 'html.parser')
 
-    return conn, cursor
+            # Extraction des données
+            weapon_name = soup_weapon.find('h1', class_='firstHeading').get_text(strip=True, separator=" ")
+            print(weapon_name)
 
-# Fonction pour télécharger une image uniquement si elle n'existe pas déjà
-def download_image(img_url, img_path):
-    if not os.path.exists(img_path):
-        img_response = requests.get(img_url)
-        with (open(img_path, 'wb') as img_file):
-            img_file.write(img_response.content)
-        print(f"Image downloaded: {img_path}")
-    else:
-        pass
+            description_tag = soup_weapon.find('meta', property='og:description')
+            description = description_tag["content"] if description_tag else None
 
-# Fonction pour scraper les armes et leurs propriétés d'une page donnée
-def scrape_weapon_and_details(weapon_url, name_tag, cols, cursor):
-    name = name_tag.get('title')
-    full_weapon_url = f"{base_url}{weapon_url}"
+            quote_tag = soup_weapon.find('div', class_='bg3wiki-blockquote-text')
+            quote = quote_tag.get_text() if quote_tag else None
 
-    enchantment = cols[1].get_text(strip=True, separator=" ")
-    damage = cols[2].get_text(strip=True, separator=" ")
-    damage_type = cols[3].get_text(strip=True, separator=" ")
-    weight = cols[4].get_text(strip=True, separator=" ")
-    price = cols[5].get_text(strip=True, separator=" ")
-    special = cols[6].get_text(strip=True, separator=" ")
+            properties = soup_weapon.find('div', class_='bg3wiki-property-list')
 
-    # Scraper la page de l'arme pour obtenir la description et l'image principale
-    response = requests.get(full_weapon_url)
-    soup = BeautifulSoup(response.text, 'html.parser')
+            # Initialisation de la variable attributes
+            attributes = extract_attributes(properties)
 
-    # Récupération de l'image principale (300x300 px)
-    main_image_tag = soup.find('img', src=lambda x: x and '300px' in x)
-    main_image_path = None
-    if main_image_tag:
-        img_url = base_url + main_image_tag['src']
-        img_name = os.path.basename(img_url)
-        main_image_path = os.path.join(image_folder, img_name)
+            # Type
+            type_tag = find_name_by_text(properties, 'dt', 'Details')
+            type_ = type_tag.find_next('img')['alt'] if type_tag else 'Unknown'
 
-        download_image(img_url, main_image_path)
+            # Range
+            melee_tag = find_name_by_text(properties, 'dd', 'Melee:')
+            if melee_tag:
+                range_m = melee_tag.get_text(strip=True, separator=" ").split(':')[1].split('/')[0].replace('m', '').strip()
+                range_f = melee_tag.get_text(strip=True, separator=" ").split(':')[1].split('/')[1].replace('ft', '').strip()
+            else:
+                range_tag = find_name_by_text(properties, 'dd', 'Range:')
+                range_m = range_tag.get_text(strip=True, separator=" ").split(':')[1].split('/')[0].replace('m', '').strip()
+                range_f = range_tag.get_text(strip=True, separator=" ").split(':')[1].split('/')[1].replace('ft', '').strip()
 
-    description_tag = soup.find('div', class_='mw-parser-output').find('p')
-    description = description_tag.get_text(strip=True, separator=" ") if description_tag else "No description available"
+            # Utilisation de la fonction personnalisée pour rechercher les propriétés dans des <dd>
+            rarity_dd = find_name_by_text(properties, 'dd', 'Rarity:')
+            rarity = rarity_dd.get_text(strip=True, separator=" ").split(':')[-1].strip() if rarity_dd else 'Unknown'
 
-    # Extraire la localisation
-    localisation = ""
-    localisation_section = soup.find('h2', string=lambda x: x and 'Where to find' in x)
-    if localisation_section:
-        next_div = localisation_section.find_next('div', class_='bg3wiki-tooltip-box')
-        if next_div:
-            locations = [li.get_text() for li in next_div.find_all('li')]
-            localisation = "\n\n".join(locations)
+            enchantment_dd = find_name_by_text(properties, 'dd', 'Enchantment:')
+            enchantment = int(enchantment_dd.get_text(strip=True, separator=" ").split('+')[
+                                  -1].strip()) if enchantment_dd and 'None' not in enchantment_dd.get_text(strip=True,
+                                                                                                           separator=" ") else 0
 
-    # Insertion des informations de base dans la table weapons, y compris la localisation
-    cursor.execute('''
-    INSERT INTO weapons (name, enchantment, damage, damage_type, weight, price, special, description, localisation, image_path, url)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (name, enchantment, damage, damage_type, weight, price, special, description, localisation, main_image_path, full_weapon_url))
+            # Poids
+            weight_element = find_name_by_text(properties, 'dd', 'Weight:')
+            if weight_element:
+                weight = weight_element.get_text(strip=True, separator=" ").split(':')[-1].strip().split('/')
+                weight_kg = float(weight[0].strip().split(' ')[0].replace('kg', '').strip())
+                weight_lb = float(weight[1].strip().split(' ')[0].replace('lb', '').strip())
+            else:
+                weight_kg = weight_lb = 0.0
 
-    weapon_id = cursor.lastrowid
+            # Traitement du prix
+            price_element = find_name_by_text(properties, 'dd', 'Price:')
+            if price_element:
+                price_text = price_element.get_text(strip=True, separator=" ").split(':')[-1].strip().replace('gp', '').strip()
 
-    # Scraper les propriétés détaillées de l'arme
-    properties_section = soup.find('div', class_='bg3wiki-property-list')
-    if properties_section:
-        for dl in properties_section.find_all('dl'):
-            current_property_name = None
-            current_property_value = ""
-            image_paths = []
+                # Vérifier si le prix contient deux valeurs (par exemple, "800 / 1050 H Honour")
+                if '/' in price_text:
+                    normal_price, honour_price = price_text.split('/')
+                    # Extraire uniquement la partie avant la barre (prix normal)
+                    price_gp = float(normal_price.strip())
+                else:
+                    # Si une seule valeur est présente
+                    price_gp = float(price_text) if price_text else 0.0
+            else:
+                price_gp = 0.0  # Valeur par défaut si aucun prix n'est trouvé
 
-            for child in dl.children:
-                if child.name == 'dt':
-                    if current_property_name:
-                        cursor.execute('''
-                        INSERT INTO weapon_properties (weapon_id, property_name, property_value, image_path)
-                        VALUES (?, ?, ?, ?)
-                        ''', (weapon_id, current_property_name, current_property_value.strip(), ','.join(image_paths)))
+            # Extraction du UID et du UUID
+            uuid_dd = find_name_by_text(properties, 'dd', 'UUID')
+            if uuid_dd:
+                tt_elements = uuid_dd.find_all('tt')
+                uid = tt_elements[0].get_text(strip=True, separator=" ") if len(tt_elements) > 0 else 'Unknown UID'
+                weapon_id = tt_elements[1].get_text(strip=True, separator=" ") if len(tt_elements) > 1 else uid or 'Unknown UUID'
+            else:
+                uid = 'Unknown UID'
+                weapon_id = weapon_name
+            if weapon_id in set_of_weapon_id:
+                weapon_id += uid
+            set_of_weapon_id.add(weapon_id)
 
-                    current_property_name = child.get_text().strip()
-                    current_property_value = ""
-                    image_paths = []
-                elif child.name == 'dd' and current_property_name:
-                    current_property_value += "\n" + child.get_text(separator=" ").strip()
+            # Téléchargement de l'image
+            image_tag = weapon_cell.find('img', src=True, width='50', height='50')
+            if image_tag:
+                image_url = "https://bg3.wiki" + image_tag['src']
+                image_name = f"{weapon_name}.png"
+                image_path = os.path.join(image_folder, image_name)
 
-                    img_tag = child.find('img')
-                    if img_tag:
-                        img_url = base_url + img_tag['src']
-                        img_name = os.path.basename(img_url)
-                        img_path = os.path.join(image_folder, img_name)
+                # Téléchargement de l'image
+                img_data = requests.get(image_url).content
+                with open(image_path, 'wb') as handler:
+                    handler.write(img_data)
+            else:
+                image_path = None
 
-                        download_image(img_url, img_path)
-                        image_paths.append(img_path)
+            # Insertion des données dans la table Weapons
+            cursor.execute('''
+            INSERT INTO Weapons (weapon_id, name, rarity, description, quote, weight_kg, weight_lb, price, enchantment, type, range_m, range_f, attributes, uid, image_path)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (weapon_id, weapon_name, rarity, description, quote, weight_kg, weight_lb, price_gp, enchantment, type_, range_m, range_f,
+                  attributes, uid, image_path))
 
-            if current_property_name:
+            # Extraction des informations de dégâts
+            damage_dl_list = find_name_by_text(properties, 'dl', 'amage').find_all_next(class_='bg3wiki-info-blob')
+            for damage_dl in damage_dl_list:
+                # Extrait le type de dégâts
+                damage_type = damage_dl.find('a', title='Damage Types')
+                if not damage_type:
+                    continue
+                damage_type = damage_type.find_next("a").get_text(strip=True)
+
+                # Extrait le dé d'origine (ex: '1d4')
+                damage_dice = damage_dl.get_text(strip=True).split(' ')[0]
+
+                # Extrait le bonus de dégâts (ex: '+1')
+                damage_bonus_text = damage_dl.get_text(strip=True)
+                # Extrait le bonus de dégâts uniquement s'il se trouve juste après le dé (ex: '1d4 + 1 (2~5)')
+                bonus_part = damage_bonus_text.split('(')[0].strip()  # Prend tout jusqu'à la première parenthèse
+                if '+' in bonus_part:
+                    try:
+                        damage_bonus = int(bonus_part.split('+')[1].strip())
+                    except ValueError:
+                        damage_bonus = 0  # Si la conversion échoue, définir à 0
+                else:
+                    damage_bonus = 0
+
+                # Extrait le range total (ex: '2~5')
+                damage_total_range = damage_bonus_text.split('(')[-1].split(')')[0] if '(' in damage_bonus_text else ''
+
+                # Extrait le modificateur de dégâts (ex: 'Strength or Dexterity modifier')
+                modifier_tag = damage_dl.find('a', href='/wiki/Damage_Roll#Modifiers')
+                modifier = modifier_tag.get_text(strip=True) if modifier_tag else None
+
+                # Extrait la source de dégâts
+                damage_source = damage_dl.find_previous('dt').get_text(strip=True, separator=" ")
+
+                # Insertion des informations de dégâts dans la table Damage
                 cursor.execute('''
-                INSERT INTO weapon_properties (weapon_id, property_name, property_value, image_path)
-                VALUES (?, ?, ?, ?)
-                ''', (weapon_id, current_property_name, current_property_value.strip(), ','.join(image_paths)))
+                INSERT INTO Damage (weapon_id, damage_dice, damage_bonus, damage_total_range, modifier, damage_type, damage_source)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                ''', (weapon_id, damage_dice, damage_bonus, damage_total_range, modifier, damage_type, damage_source))
 
-    # Scraper les actions d'arme sous la section "Weapon actions"
-    weapon_actions_section = soup.find('h3', string=" Weapon actions ")
-    if weapon_actions_section:
-        dl_sections = weapon_actions_section.find_next_siblings('dl')
-        for dl in dl_sections:
-            current_property_name = None
-            current_property_value = ""
-            image_paths = []
+            # Capacités spéciales
+            special_abilities_section = soup_weapon.find("h3", string=lambda x: x and 'Special' in x)
+            if special_abilities_section:
+                # Extrait les capacités spéciales de l'arme
+                special_abilities = ''.join(
+                    sibling.get_text() for sibling in special_abilities_section.find_next_siblings()
+                    if sibling.name not in ['h3', 'h2', 'h1']
+                )
 
-            for child in dl.children:
-                if child.name == 'dt':
-                    if current_property_name:
-                        cursor.execute('''
-                        INSERT INTO weapon_properties (weapon_id, property_name, property_value, image_path)
-                        VALUES (?, ?, ?, ?)
-                        ''', (weapon_id, current_property_name, current_property_value.strip(), ','.join(image_paths)))
-
-                    current_property_name = child.get_text(strip=True)
-                    current_property_value = ""
-                    image_paths = []
-                elif child.name == 'dd' and current_property_name:
-                    current_property_value += "\n" + child.get_text(separator=" ").strip()
-
-                    img_tag = child.find('img')
-                    if img_tag:
-                        img_url = base_url + img_tag['src']
-                        img_name = os.path.basename(img_url)
-                        img_path = os.path.join(image_folder, img_name)
-
-                        download_image(img_url, img_path)
-                        image_paths.append(img_path)
-
-            if current_property_name:
+                # Insertion des informations spéciales dans la table Special_Abilities
                 cursor.execute('''
-                INSERT INTO weapon_properties (weapon_id, property_name, property_value, image_path)
-                VALUES (?, ?, ?, ?)
-                ''', (weapon_id, current_property_name, current_property_value.strip(), ','.join(image_paths)))
+                INSERT INTO Special_Abilities (weapon_id, name, description)
+                VALUES (?, ?, ?)
+                ''', (weapon_id, None, special_abilities))
 
-# Fonction pour scraper les armes d'une page donnée
-def scrape_weapon_page(url, cursor):
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
+            # Capacités de l'arme
+            weapon_abilities_section = soup_weapon.find("h3", string=lambda x: x and 'Weapon actions' in x)
+            if weapon_abilities_section:
+                weapon_abilities_list = weapon_abilities_section.find_next_siblings('dl')
+                for weapon_ability in weapon_abilities_list:
+                    # Extrait le nom de la capacité
+                    ability_name = weapon_ability.find_next('dt').get_text(strip=True, separator=" ").replace('( )', '').strip()
 
-    seen_weapons = set()
+                    # Extrait la description de la capacité
+                    ability_description = weapon_ability.find_next('dd').get_text(strip=True, separator=" ")
 
-    for table in soup.find_all('table', class_='wikitable sortable bg3wiki-weapons-table'):
-        for row in table.find_all('tr')[1:]:
-            cols = row.find_all('td')
-            if len(cols) < 7:
-                continue
+                    # Insertion des informations spéciales dans la table Special_Abilities
+                    cursor.execute('''
+                    INSERT INTO Weapon_Actions (weapon_id, name, description)
+                    VALUES (?, ?, ?)
+                    ''', (weapon_id, ability_name, ability_description))
 
-            name_tag = cols[0].find('a')
-            if not name_tag or 'title' not in name_tag.attrs:
-                continue
+            # Lieux de l'arme
+            location_section = soup_weapon.find("h2", string=lambda x: x and 'Where to find' in x)
+            if location_section:
+                for location in location_section.find_next('ul').find_all('li'):
+                    # Extrait des localisations
+                    location_description = location.get_text(strip=True, separator=" ")
 
-            name = name_tag.get('title')
-            if name in seen_weapons:
-                continue
+                    # Insertion des informations de localisation dans la table Weapon_Locations
+                    cursor.execute('''
+                    INSERT INTO Weapon_Locations (weapon_id, location_description)
+                    VALUES (?, ?)
+                    ''', (weapon_id, location_description))
 
-            seen_weapons.add(name)
-            weapon_url = name_tag.get('href')
+            # Extraction des notes
+            notes_section = soup_weapon.find("h2", string=lambda x: x and 'Notes' in x)
+            if notes_section:
+                notes_list = notes_section.find_next('div', class_='bg3wiki-tooltip-box').find_all('li')
+                for note in notes_list:
+                    note_content = note.get_text(strip=True, separator=" ")
+                    cursor.execute('''
+                    INSERT INTO Notes (weapon_id, note_content)
+                    VALUES (?, ?)
+                    ''', (weapon_id, note_content))
 
-            # Scraper l'arme et ses propriétés
-            scrape_weapon_and_details(weapon_url, name_tag, cols, cursor)
-
-# Scraping des armes depuis les pages listées
-conn, cursor = init_db()
-for url in weapon_urls:
-    scrape_weapon_page(url, cursor)
-
-# Validation des transactions et fermeture de la connexion
+# Commit des changements après chaque itération
 conn.commit()
+
+# Fermeture de la connexion à la base de données
 conn.close()
 
-print("Base de données des armes créée et peuplée avec succès.")
+print("Les données ont été extraites et stockées dans la base de données avec succès.")
