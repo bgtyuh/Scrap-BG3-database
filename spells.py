@@ -9,29 +9,26 @@ conn = sqlite3.connect('bg3_spells.db')
 cursor = conn.cursor()
 
 # Suppression des tables si elles existent déjà
-cursor.execute('DROP TABLE IF EXISTS spell_properties')
-cursor.execute('DROP TABLE IF EXISTS spells')
+cursor.execute('DROP TABLE IF EXISTS Spell_Properties')
+cursor.execute('DROP TABLE IF EXISTS Spells')
 
 # Création des tables
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS spells (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    section TEXT,
+CREATE TABLE IF NOT EXISTS Spells (
+    name TEXT PRIMARY KEY NOT NULL,
+    level TEXT,
     description TEXT,
-    url TEXT,
     image_path TEXT
 )
 ''')
 
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS spell_properties (
+CREATE TABLE IF NOT EXISTS Spell_Properties (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    spell_id INTEGER,
+    spell_name INTEGER,
     property_name TEXT,
     property_value TEXT,
-    image_path TEXT,
-    FOREIGN KEY (spell_id) REFERENCES spells(id)
+    FOREIGN KEY (spell_name) REFERENCES spells(name)
 )
 ''')
 
@@ -103,9 +100,8 @@ def scrape_spell(element):
                 # Retourne les informations du sort pour insertion
                 result = {
                     'name': name,
-                    'section': current_section,
+                    'level': current_section,
                     'description': description,
-                    'url': sort_url,
                     'image_path': sort_image_path,
                     'sort_soup': sort_soup
                 }
@@ -115,7 +111,7 @@ def scrape_spell(element):
 elements = soup.find_all(['h4', 'li'])
 
 # Utilisation de ThreadPoolExecutor pour paralléliser le scraping
-with ThreadPoolExecutor(max_workers=10) as executor:
+with ThreadPoolExecutor(max_workers=6) as executor:
     futures = [executor.submit(scrape_spell, element) for element in elements]
 
     for future in as_completed(futures):
@@ -123,10 +119,10 @@ with ThreadPoolExecutor(max_workers=10) as executor:
         if spell_data:
             # Insertion des informations de base dans la table spells
             cursor.execute('''
-            INSERT INTO spells (name, section, description, url, image_path)
-            VALUES (?, ?, ?, ?, ?)
-            ''', (spell_data['name'], spell_data['section'], spell_data['description'], spell_data['url'], spell_data['image_path']))
-            spell_id = cursor.lastrowid
+            INSERT INTO Spells (name, level, description, image_path)
+            VALUES (?, ?, ?, ?)
+            ''', (spell_data['name'], spell_data['level'], spell_data['description'], spell_data['image_path']))
+            spell_name = spell_data['name']
 
             # Extraction des propriétés spécifiques
             properties_section = spell_data['sort_soup'].find('div', class_='bg3wiki-property-list')
@@ -140,9 +136,9 @@ with ThreadPoolExecutor(max_workers=10) as executor:
                         if child.name == 'dt':
                             if current_property_name:
                                 cursor.execute('''
-                                INSERT INTO spell_properties (spell_id, property_name, property_value, image_path)
-                                VALUES (?, ?, ?, ?)
-                                ''', (spell_id, current_property_name, current_property_value.strip(), property_image_path))
+                                INSERT INTO Spell_Properties (spell_name, property_name, property_value)
+                                VALUES (?, ?, ?)
+                                ''', (spell_name, current_property_name, current_property_value.strip()))
 
                             current_property_name = child.get_text().strip()
                             current_property_value = ""
@@ -150,23 +146,11 @@ with ThreadPoolExecutor(max_workers=10) as executor:
                         elif child.name == 'dd' and current_property_name:
                             current_property_value += " " + child.get_text(separator=" ").strip()
 
-                            img_tag = child.find('img')
-                            if img_tag:
-                                img_url = base_url + img_tag['src']
-                                img_name = os.path.basename(img_url)
-                                img_path = os.path.join(image_folder, img_name)
-
-                                img_response = requests.get(img_url)
-                                with open(img_path, 'wb') as img_file:
-                                    img_file.write(img_response.content)
-
-                                property_image_path = img_path
-
                     if current_property_name:
                         cursor.execute('''
-                        INSERT INTO spell_properties (spell_id, property_name, property_value, image_path)
-                        VALUES (?, ?, ?, ?)
-                        ''', (spell_id, current_property_name, current_property_value.strip(), property_image_path))
+                        INSERT INTO Spell_Properties (spell_name, property_name, property_value)
+                        VALUES (?, ?, ?)
+                        ''', (spell_name, current_property_name, current_property_value.strip()))
 
 # Validation des transactions et fermeture de la connexion
 conn.commit()
