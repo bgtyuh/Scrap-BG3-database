@@ -2,8 +2,6 @@ import os
 import requests
 from bs4 import BeautifulSoup
 import sqlite3
-import re
-import json
 
 # Créer un dossier pour stocker les images si ce n'est pas déjà fait
 image_folder = 'armour_images'
@@ -126,7 +124,7 @@ if response.status_code == 200:
             # Type d'armure
             armour_type_element = find_li_by_text(armours_soup, 'Required Proficiency')
             armour_type = armour_type_element.get_text(strip=True, separator=" ").split(':')[
-                -1].strip() if armour_type_element else 'Unknown'
+                -1].strip() if armour_type_element else 'Heavy Armour'
 
             # Rareté
             rarity_element = find_li_by_text(armours_soup, 'Rarity:')

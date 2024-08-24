@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import sqlite3
 
 # Créer un dossier pour stocker les images si ce n'est pas déjà fait
-image_folder = 'clothing_images'
+image_folder = 'shield_images'
 os.makedirs(image_folder, exist_ok=True)
 
 
@@ -30,7 +30,7 @@ def find_li_by_text(soup, text):
 
 
 # Connexion à la base de données SQLite
-conn = sqlite3.connect('bg3_clothing.db')
+conn = sqlite3.connect('bg3_shields.db')
 c = conn.cursor()
 
 # Suppression des tables si elles existent déjà pour garantir une base de données propre
@@ -50,8 +50,7 @@ CREATE TABLE IF NOT EXISTS Items (
     weight_kg REAL,
     weight_lb REAL,
     price_gp REAL,
-    armour_class_base INTEGER,
-    armour_class_modifier TEXT,
+    shield_class_base INTEGER,
     uid TEXT,
     image_path TEXT
 )
@@ -78,41 +77,41 @@ CREATE TABLE IF NOT EXISTS Locations (
 ''')
 
 # URL de la page Clothing
-clothing_url = "https://bg3.wiki/wiki/Clothing"
+shields_url = "https://bg3.wiki/wiki/Shields"
 
 # Requête pour obtenir le contenu de la page
-response = requests.get(clothing_url)
+response = requests.get(shields_url)
 if response.status_code == 200:
     soup = BeautifulSoup(response.content, 'html.parser')
 
     base_url = "https://bg3.wiki"
 
     # Extraction des liens vers chaque page de vêtement avec une image de taille 50x50
-    clothing_links = []
+    shields_links = []
     for a in soup.select('table.wikitable a'):
         img = a.find('img')
         if a['href'].startswith('/wiki/') and img and img.get('width') == '50' and img.get('height') == '50':
-            clothing_links.append(base_url + a['href'])
+            shields_links.append(base_url + a['href'])
 
     # Itérer sur chaque lien de vêtement pour scraper les données
-    for clothing_url in clothing_links:
-        response = requests.get(clothing_url)
+    for shields_url in shields_links:
+        response = requests.get(shields_url)
         if response.status_code == 200:
-            clothing_soup = BeautifulSoup(response.content, 'html.parser')
+            shields_soup = BeautifulSoup(response.content, 'html.parser')
 
             # Extraction des données
-            name = clothing_soup.find('h1', id='firstHeading').get_text(strip=True, separator=" ")
+            name = shields_soup.find('h1', id='firstHeading').get_text(strip=True, separator=" ")
 
             # Vérification si l'élément quote existe avant d'appeler get_text()
-            description_element_tag = clothing_soup.find('meta', property='og:description')
+            description_element_tag = shields_soup.find('meta', property='og:description')
             description = description_element_tag["content"] if description_element_tag else ""
 
             # Vérification si l'élément quote existe avant d'appeler get_text()
-            quote_element = clothing_soup.find('div', class_='bg3wiki-blockquote-text')
+            quote_element = shields_soup.find('div', class_='bg3wiki-blockquote-text')
             quote = quote_element.get_text(strip=True, separator=" ") if quote_element else ""
 
             # Télécharger l'image principale (floatright)
-            main_image = clothing_soup.find('img', alt=name + ' image')
+            main_image = shields_soup.find('img', alt=name + ' image')
             if main_image and main_image['src']:
                 img_url = base_url + main_image['src']
                 img_filename = os.path.basename(main_image['src'])
@@ -121,13 +120,18 @@ if response.status_code == 200:
             else:
                 image_path = None
 
+            # Type d'armure
+            shield_type_element = find_li_by_text(shields_soup, 'Required Proficiency')
+            shield_type = shield_type_element.get_text(strip=True, separator=" ").split(':')[
+                -1].strip() if shield_type_element else 'Shields'
+
             # Rareté
-            rarity_element = find_li_by_text(clothing_soup, 'Rarity:')
+            rarity_element = find_li_by_text(shields_soup, 'Rarity:')
             rarity = rarity_element.get_text(strip=True, separator=" ").split(':')[
                 -1].strip() if rarity_element else 'Unknown'
 
             # Poids
-            weight_element = find_li_by_text(clothing_soup, 'Weight:')
+            weight_element = find_li_by_text(shields_soup, 'Weight:')
             if weight_element:
                 weight = weight_element.get_text(strip=True, separator=" ").split(':')[-1].strip().split('/')
                 weight_kg = float(weight[0].strip().split(' ')[0].replace('kg', '').strip())
@@ -136,7 +140,7 @@ if response.status_code == 200:
                 weight_kg = weight_lb = 0.0
 
             # Traitement du prix
-            price_element = find_li_by_text(clothing_soup, 'Price:')
+            price_element = find_li_by_text(shields_soup, 'Price:')
             if price_element:
                 price_text = price_element.get_text(strip=True, separator=" ").split(':')[-1].strip().replace('gp',
                                                                                                               '').strip()
@@ -153,16 +157,12 @@ if response.status_code == 200:
                 price_gp = 0.0  # Valeur par défaut si aucun prix n'est trouvé
 
             # Classe d'armure
-            armour_class_base_element = clothing_soup.find('div', class_='ac-value')
-            armour_class_base = int(
-                armour_class_base_element.get_text(strip=True, separator=" ")) if armour_class_base_element else 0
-
-            armour_class_modifier_element = clothing_soup.find('div', class_='ac-value-comment')
-            armour_class_modifier = armour_class_modifier_element.get_text(strip=True,
-                                                                           separator=" ") if armour_class_modifier_element else 'None'
+            shield_class_base_element = shields_soup.find('div', class_='ac-value')
+            shield_class_base = int(
+                shield_class_base_element.get_text(strip=True, separator=" ")) if shield_class_base_element else 0
 
             # UID et UUID
-            uid_element = clothing_soup.find_all('tt')
+            uid_element = shields_soup.find_all('tt')
             uid = uid_element[0].get_text(strip=True, separator=" ") if uid_element else 'Unknown UID'
             uuid = uid_element[1].get_text(strip=True, separator=" ") if len(uid_element) > 1 else 'Unknown UUID'
 
@@ -174,14 +174,14 @@ if response.status_code == 200:
 
             # Insertion des données dans la table Items
             c.execute('''
-            INSERT INTO Items (item_id, name, description, quote, type, rarity, weight_kg, weight_lb, price_gp, armour_class_base, armour_class_modifier, uid, image_path)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO Items (item_id, name, description, quote, type, rarity, weight_kg, weight_lb, price_gp, shield_class_base, uid, image_path)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (
-            uuid, name, description, quote, 'Clothing', rarity, weight_kg, weight_lb, price_gp, armour_class_base, armour_class_modifier,
+            uuid, name, description, quote, shield_type, rarity, weight_kg, weight_lb, price_gp, shield_class_base,
             uid, image_path))
 
             # Extraction des effets spéciaux des <dl>, <ul> et autres éléments après "Special"
-            specials_section = clothing_soup.find('h3', string="Special")
+            specials_section = shields_soup.find('h3', string="Special")
             if specials_section:
                 # Suivre les éléments pertinents après le <h3> "Special"
                 next_elem = specials_section.find_next_sibling()
@@ -225,7 +225,7 @@ if response.status_code == 200:
                     next_elem = next_elem.find_next_sibling()
 
             # Extraction des emplacements "Where to find"
-            location_section = clothing_soup.find('h2', string=lambda x: x and "Where to find" in x)
+            location_section = shields_soup.find('h2', string=lambda x: x and "Where to find" in x)
             if location_section:
                 # Trouver le <div> suivant contenant les informations
                 location_div = location_section.find_next_sibling()
