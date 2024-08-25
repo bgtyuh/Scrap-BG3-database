@@ -1,5 +1,5 @@
-import sqlite3
 import json
+import sqlite3
 
 # Load the JSON from the updated file
 with open('data/json/classes.json', 'r') as file:

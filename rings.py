@@ -1,9 +1,10 @@
+import json
 import os
+import re
+import sqlite3
+
 import requests
 from bs4 import BeautifulSoup
-import sqlite3
-import re
-import json
 
 # Créer un dossier pour stocker les images si ce n'est pas déjà fait
 image_folder = 'data/images/ring_images'

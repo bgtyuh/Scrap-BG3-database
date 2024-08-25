@@ -1,5 +1,5 @@
-import sqlite3
 import json
+import sqlite3
 
 # Charger le JSON depuis le fichier
 with open('data/json/races.json', 'r') as file:

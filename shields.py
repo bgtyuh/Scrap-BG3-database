@@ -1,10 +1,10 @@
+import json
 import os
 import re
-import json
+import sqlite3
 
 import requests
 from bs4 import BeautifulSoup
-import sqlite3
 
 # Créer un dossier pour stocker les images si ce n'est pas déjà fait
 image_folder = 'data/images/shield_images'

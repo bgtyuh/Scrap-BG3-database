@@ -1,8 +1,9 @@
 import os
 import sqlite3
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 import requests
 from bs4 import BeautifulSoup
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Connexion à la base de données SQLite (ou création si elle n'existe pas)
 conn = sqlite3.connect('data/databases/bg3_spells.db')

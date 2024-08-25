@@ -1,5 +1,5 @@
-import sqlite3
 import json
+import sqlite3
 
 # Load the JSON from the provided file
 with open('data/json/backgrounds.json', 'r') as file:
