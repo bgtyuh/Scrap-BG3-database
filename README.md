@@ -36,9 +36,7 @@ Scrap-BG3-database/
 ├── ... (autres scripts de scraping)
 │
 ├── .idea/  (fichiers de configuration PyCharm)
-├── __pycache__/  (fichiers compilés Python, ignorables)
 ├── README.md  (ce fichier)
-└── .gitignore  (à configurer si nécessaire)
 ```
 
 ## Structure des données
