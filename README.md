@@ -50,7 +50,3 @@ Scrap-BG3-database/
 ## Contribution
 
 Les contributions sont les bienvenues ! Si vous souhaitez améliorer les scrapers ou ajouter de nouvelles fonctionnalités, n'hésitez pas à soumettre une pull request.
-
-## Licence
-
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
