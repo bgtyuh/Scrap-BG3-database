@@ -20,7 +20,8 @@ c.execute('DROP TABLE IF EXISTS Ability_Saves')
 c.execute('''
 CREATE TABLE Abilities (
     name TEXT PRIMARY KEY,
-    description TEXT
+    description TEXT,
+    image_path TEXT
 )
 ''')
 
@@ -63,9 +64,9 @@ CREATE TABLE Ability_Saves (
 for ability in data['abilities']:
     # Insert ability data
     c.execute('''
-    INSERT INTO Abilities (name, description)
-    VALUES (?, ?)
-    ''', (ability['name'], ability['description']))
+    INSERT INTO Abilities (name, description, image_path)
+    VALUES (?, ?, ?)
+    ''', (ability['name'], ability['description'], ability['image_path']))
 
     ability_name = ability['name']
 

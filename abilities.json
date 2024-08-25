@@ -15,7 +15,8 @@
           "Athletics": "Athletics is used during attempts to shove other creatures, as well as when attempting to resist being shoved."
         }
       },
-      "saves": "Strength saves are rare, and primarily called for when attempting to resist being knocked prone."
+      "saves": "Strength saves are rare, and primarily called for when attempting to resist being knocked prone.",
+      "image_path": "Strength_Score_Icon.png"
     },
     {
       "name": "Dexterity",
@@ -33,7 +34,8 @@
           "Stealth": "Stealth is used to hide from other characters and when attempting to remain undetected while invisible."
         }
       },
-      "saves": "Dexterity saves are commonly called for by spells that deal area of effect damage, often halving the damage rolls of those spells."
+      "saves": "Dexterity saves are commonly called for by spells that deal area of effect damage, often halving the damage rolls of those spells.",
+      "image_path": "Dexterity_Score_Icon.png"
     },
     {
       "name": "Constitution",
@@ -44,7 +46,8 @@
       "checks": {
         "general": "Constitution checks are rare and have no associated skills. They are made when a creature's resilience is tested, but more commonly a Constitution save is attempted instead."
       },
-      "saves": "Constitution saves are made to maintain concentration on long-duration spells, and are used when saving against poisons or spells that test a target's endurance or resilience."
+      "saves": "Constitution saves are made to maintain concentration on long-duration spells, and are used when saving against poisons or spells that test a target's endurance or resilience.",
+      "image_path": "Constitution_Score_Icon.png"
     },
     {
       "name": "Intelligence",
@@ -59,7 +62,8 @@
           "Religion": "Religion is used when attempting to remember facts about deities and the planes of existence."
         }
       },
-      "saves": "Intelligence saves are used against psionic spells and features, such as those used by illithids."
+      "saves": "Intelligence saves are used against psionic spells and features, such as those used by illithids.",
+      "image_path": "Intelligence_Score_Icon.png"
     },
     {
       "name": "Wisdom",
@@ -74,7 +78,8 @@
           "Survival": "Survival is used when attempting to spot hidden treasure, as well as during dialogues when dealing with anything related to experience with animals or the wilderness."
         }
       },
-      "saves": "Wisdom saves are some of the most common saves in the game, frequently made to resist spells that test a creature's composure, willpower, or self-control."
+      "saves": "Wisdom saves are some of the most common saves in the game, frequently made to resist spells that test a creature's composure, willpower, or self-control.",
+      "image_path": "Wisdom_Score_Icon.png"
     },
     {
       "name": "Charisma",
@@ -88,7 +93,8 @@
           "Persuasion": "Persuasion is used when attempting to negotiate with or convince others."
         }
       },
-      "saves": "Charisma saves are rare, generally found only on effects which inflict the banished condition, or given as class-based alternatives to Sorcerers, Warlocks, or Bards on Wisdom or Intelligence saves found in dialogues."
+      "saves": "Charisma saves are rare, generally found only on effects which inflict the banished condition, or given as class-based alternatives to Sorcerers, Warlocks, or Bards on Wisdom or Intelligence saves found in dialogues.",
+      "image_path": "Charisma_Score_Icon.png"
     }
   ]
 }
