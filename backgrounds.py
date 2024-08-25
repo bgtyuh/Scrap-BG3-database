@@ -2,11 +2,11 @@ import sqlite3
 import json
 
 # Load the JSON from the provided file
-with open('backgrounds.json', 'r') as file:
+with open('data/json/backgrounds.json', 'r') as file:
     data = json.load(file)
 
 # Connect to SQLite
-conn = sqlite3.connect('bg3_backgrounds.db')
+conn = sqlite3.connect('data/databases/bg3_backgrounds.db')
 c = conn.cursor()
 
 # Drop tables if they already exist

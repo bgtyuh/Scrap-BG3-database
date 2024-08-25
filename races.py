@@ -2,11 +2,11 @@ import sqlite3
 import json
 
 # Charger le JSON depuis le fichier
-with open('races.json', 'r') as file:
+with open('data/json/races.json', 'r') as file:
     data = json.load(file)
 
 # Connexion à SQLite
-conn = sqlite3.connect('bg3_races.db')
+conn = sqlite3.connect('data/databases/bg3_races.db')
 c = conn.cursor()
 
 # Création des tables

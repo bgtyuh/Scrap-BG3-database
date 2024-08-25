@@ -2,11 +2,11 @@ import sqlite3
 import json
 
 # Load the JSON from the provided file
-with open('feats.json', 'r') as file:
+with open('data/json/feats.json', 'r') as file:
     data = json.load(file)
 
 # Connect to SQLite
-conn = sqlite3.connect('bg3_feats.db')
+conn = sqlite3.connect('data/databases/bg3_feats.db')
 c = conn.cursor()
 
 # Drop tables if they already exist

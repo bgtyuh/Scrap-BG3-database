@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def connect_to_db(db_name='bg3_weapons.db'):
+def connect_to_db(db_name='data/databases/bg3_weapons.db'):
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     return conn, cursor
@@ -328,7 +328,7 @@ def main():
     soup = fetch_soup(list_url)
     set_of_url = set()
     set_of_weapon_id = set()
-    image_folder = 'weapon_images'
+    image_folder = 'data/images/weapon_images'
 
     rows = soup.select('table.wikitable tbody tr')
     for row in rows:

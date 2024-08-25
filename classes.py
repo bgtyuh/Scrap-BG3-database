@@ -2,11 +2,11 @@ import sqlite3
 import json
 
 # Load the JSON from the updated file
-with open('classes.json', 'r') as file:
+with open('data/json/classes.json', 'r') as file:
     data = json.load(file)
 
 # Connect to SQLite
-conn = sqlite3.connect('bg3_classes.db')
+conn = sqlite3.connect('data/databases/bg3_classes.db')
 c = conn.cursor()
 
 # Drop tables if they already exist

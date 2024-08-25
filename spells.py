@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Connexion à la base de données SQLite (ou création si elle n'existe pas)
-conn = sqlite3.connect('bg3_spells.db')
+conn = sqlite3.connect('data/databases/bg3_spells.db')
 cursor = conn.cursor()
 
 # Suppression des tables si elles existent déjà
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS Spell_Properties (
 ''')
 
 # Créer un dossier pour stocker les images si ce n'est pas déjà fait
-image_folder = "spell_images"
+image_folder = "data/images/spell_images"
 if not os.path.exists(image_folder):
     os.makedirs(image_folder)
 

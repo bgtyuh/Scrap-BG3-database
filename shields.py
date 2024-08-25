@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 import sqlite3
 
 # Créer un dossier pour stocker les images si ce n'est pas déjà fait
-image_folder = 'shield_images'
+image_folder = 'data/images/shield_images'
 os.makedirs(image_folder, exist_ok=True)
 
 
@@ -33,7 +33,7 @@ def find_li_by_text(soup, text):
 
 
 # Connexion à la base de données SQLite
-conn = sqlite3.connect('bg3_shields.db')
+conn = sqlite3.connect('data/databases/bg3_shields.db')
 c = conn.cursor()
 
 # Suppression des tables si elles existent déjà pour garantir une base de données propre
