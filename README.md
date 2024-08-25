@@ -41,9 +41,11 @@ Scrap-BG3-database/
 
 ## Structure des données
 
-- **Fichiers JSON** (`data/json/`) : Ces fichiers contiennent des données structurées sur les différents éléments du jeu.
+- **Fichiers JSON** (`data/json/`) : Ces fichiers contiennent des données structurées sur les différents éléments du jeu, certains construits manuellement.
 - **Bases de données SQLite** (`data/databases/`) : Ces fichiers stockent les données sous une forme de base de données, facilitant les requêtes et analyses.
 - **Images** (`data/images/`) : Les dossiers contiennent les images des différents éléments du jeu.
+
+Les scripts pour lesquels aucun fichier JSON n'a le même nom sont conçus pour scraper directement les informations sur le [wiki de BG3](https://bg3.wiki/).
 
 ## Contribution
 
