@@ -1,0 +1,94 @@
+{
+  "abilities": [
+    {
+      "name": "Strength",
+      "description": "Strength represents a creature's ability to exert physical force, and is the game's recommended primary stat for barbarians and fighters.",
+      "uses": {
+        "attack_damage_rolls": "Creatures add their Strength modifier to the results of attack and damage rolls for melee weapons.",
+        "jump_distance": "The distance which a creature can jump is determined by their Strength score.",
+        "carrying_capacity": "A creature's Strength score is used to determine how much weight a creature can carry before becoming encumbered.",
+        "throws": "The maximum weight a creature can throw is determined by their Strength score."
+      },
+      "checks": {
+        "general": "Strength checks are made when physical might is required, such as when attempting to push over a heavy object or when attempting to force open locked doors or containers during dialogue.",
+        "skills": {
+          "Athletics": "Athletics is used during attempts to shove other creatures, as well as when attempting to resist being shoved."
+        }
+      },
+      "saves": "Strength saves are rare, and primarily called for when attempting to resist being knocked prone."
+    },
+    {
+      "name": "Dexterity",
+      "description": "Dexterity represents a creature's agility and reflexes, and is the game's recommended primary stat for monks, rangers and rogues.",
+      "uses": {
+        "attack_damage_rolls": "Creatures add their Dexterity modifier to the results of attack and damage rolls of ranged weapons and, when the creature's Dexterity score is higher than their Strength score, melee weapons with the Finesse property.",
+        "armour_class": "Creatures add their Dexterity modifier to their Armour Class (AC) – making them more difficult to hit, up to a maximum of +2 when wearing most medium armour. The bonus is ignored when wearing heavy armour, unless otherwise specified.",
+        "initiative": "Creatures add their Dexterity modifier when rolling for initiative, used to determine the turn order during combat."
+      },
+      "checks": {
+        "general": "Dexterity checks are made when attempting to be nimble.",
+        "skills": {
+          "Acrobatics": "Acrobatics is used to resist attempts at being shoved.",
+          "Sleight of Hand": "Sleight of Hand is used when attempting to pick locks, disarm traps, pickpocket NPCs or when attempting to steal items without being noticed.",
+          "Stealth": "Stealth is used to hide from other characters and when attempting to remain undetected while invisible."
+        }
+      },
+      "saves": "Dexterity saves are commonly called for by spells that deal area of effect damage, often halving the damage rolls of those spells."
+    },
+    {
+      "name": "Constitution",
+      "description": "Constitution represents a creature's health and endurance.",
+      "uses": {
+        "hit_points": "Creatures add their Constitution modifier to the amount of hit points they gain on level up. This increase is applied retroactively."
+      },
+      "checks": {
+        "general": "Constitution checks are rare and have no associated skills. They are made when a creature's resilience is tested, but more commonly a Constitution save is attempted instead."
+      },
+      "saves": "Constitution saves are made to maintain concentration on long-duration spells, and are used when saving against poisons or spells that test a target's endurance or resilience."
+    },
+    {
+      "name": "Intelligence",
+      "description": "Intelligence represents a creature's recall, as well as their ability to reason and think quickly. It is the game's recommended primary stat for wizards, and it is the spellcasting ability of wizards, fighters, and rogues.",
+      "checks": {
+        "general": "Intelligence checks are used when a creature attempts to apply logic or reason, or when attempting to remember something specific.",
+        "skills": {
+          "Arcana": "Arcana is used when attempting to remember facts about the Weave, the source of magic and spells.",
+          "History": "History is used when attempting to remember specific historical dates or events.",
+          "Investigation": "Investigation is used by creatures to discover unusual things in their surroundings, and is used during attempts at deduction during dialogue.",
+          "Nature": "Nature is used when attempting to remember facts about nature.",
+          "Religion": "Religion is used when attempting to remember facts about deities and the planes of existence."
+        }
+      },
+      "saves": "Intelligence saves are used against psionic spells and features, such as those used by illithids."
+    },
+    {
+      "name": "Wisdom",
+      "description": "Wisdom represents a creature's awareness of their surroundings and their intuition. It is the game's recommended primary stat for clerics and druids, and it is the spellcasting ability of clerics, druids, monks, and rangers.",
+      "checks": {
+        "general": "Wisdom checks are attempts to discern situations and read between the lines.",
+        "skills": {
+          "Animal Handling": "Animal Handling is used when interacting with animals.",
+          "Insight": "Insight is used to read situations and when attempting to get a greater understanding of someone's intentions.",
+          "Medicine": "Medicine is used during dialogue to heal and aid others, as well as by Transmutation School wizards to craft extra materials with the Experimental Alchemy class feature.",
+          "Perception": "Perception is used when a creature attempts to discover hidden or hard to find things in their surroundings, such as hidden containers, mechanisms or traps, as well as when attempting to spot hidden creatures. During dialogue, it is used to notice hard to spot details.",
+          "Survival": "Survival is used when attempting to spot hidden treasure, as well as during dialogues when dealing with anything related to experience with animals or the wilderness."
+        }
+      },
+      "saves": "Wisdom saves are some of the most common saves in the game, frequently made to resist spells that test a creature's composure, willpower, or self-control."
+    },
+    {
+      "name": "Charisma",
+      "description": "Charisma represents a creature's ability to exert their will when interacting with others. It is the game's recommended primary ability for bards, sorcerers, warlocks, and paladins, and it is the spellcasting ability of barbarians, bards, paladins, sorcerers, and warlocks.",
+      "checks": {
+        "general": "Charisma checks are attempts at influencing others during dialogue.",
+        "skills": {
+          "Deception": "Deception is used when attempting to deceive or trick others.",
+          "Intimidation": "Intimidation is used when attempting to frighten or coerce others.",
+          "Performance": "Proficiency in Performance allows characters to play instruments, and the skill is used when attempting to entertain others.",
+          "Persuasion": "Persuasion is used when attempting to negotiate with or convince others."
+        }
+      },
+      "saves": "Charisma saves are rare, generally found only on effects which inflict the banished condition, or given as class-based alternatives to Sorcerers, Warlocks, or Bards on Wisdom or Intelligence saves found in dialogues."
+    }
+  ]
+}

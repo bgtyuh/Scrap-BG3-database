@@ -1,0 +1,398 @@
+{
+  "feats": [
+    {
+      "name": "Ability Improvement",
+      "description": "Increase one ability score by 2, or two ability scores by 1, up to a maximum of 20."
+    },
+    {
+      "name": "Actor",
+      "description": "Your Charisma ability score increases by 1, to a maximum of 20. You gain expertise in Deception and Performance.",
+      "notes": [
+        "If not already proficient, the character also gains proficiency in the chosen skills."
+      ]
+    },
+    {
+      "name": "Alert",
+      "description": "You gain a +5 bonus to initiative and can't be Surprised."
+    },
+    {
+      "name": "Athlete",
+      "description": "Your Strength or Dexterity ability score increases by 1, to a maximum of 20. When you are Prone, standing up uses significantly less movement. Your Jump distance also increases by 50%."
+    },
+    {
+      "name": "Charger",
+      "options": [
+        {
+          "name": "Charger: Weapon Attack",
+          "description": "Charge forward and slam your weapon into the first enemy in your way without provoking Opportunity Attacks."
+        },
+        {
+          "name": "Charger: Shove",
+          "description": "Charge forward and Shove the first enemy in your way. Shove distance depends on your Strength and the target's weight."
+        }
+      ],
+      "notes": [
+        "Charger: Weapon attack uses Action + Bonus action, moves up to 9 m / 30 ft, and makes a melee attack with +5 damage.",
+        "This counts as a single weapon attack, and benefits from Extra Attack."
+      ]
+    },
+    {
+      "name": "Crossbow Expert",
+      "options": [
+        {
+          "name": "Crossbow Expert: Point-Blank",
+          "description": "When you make crossbow attacks within melee range, the attack rolls do not have disadvantage."
+        },
+        {
+          "name": "Crossbow Expert: Wounding",
+          "description": "Your Piercing Shot also inflicts Gaping Wounds for twice as long."
+        }
+      ]
+    },
+    {
+      "name": "Defensive Duellist",
+      "description": "When you are attacked with a melee attack while wielding a Finesse weapon you are proficient in, you can use a Reaction to increase your Armour Class by your proficiency bonus, possibly causing the attack to miss.",
+      "prerequisite": "Requires Dexterity to be higher than 13."
+    },
+    {
+      "name": "Dual Wielder",
+      "options": [
+        {
+          "name": "Dual Wielder",
+          "description": "You can use Two-Weapon Fighting even if your weapons aren't Light. You cannot dual-wield Heavy weapons."
+        },
+        {
+          "name": "Dual Wielder: Bonus Armour Class",
+          "description": "You have a +1 bonus to Armour Class while wielding a melee weapon in each hand."
+        }
+      ],
+      "notes": [
+        "This feat doesn't give the Two-Weapon Fighting style, it just allows a creature to dual wield non-light non-heavy weapons.",
+        "Simple melee weapons: Javelins, Maces, Quarterstaves, and Spears.",
+        "Martial melee weapons: Battleaxes, Flails, Longswords, Morningstars, Rapiers, Tridents, War Picks, and Warhammers."
+      ]
+    },
+    {
+      "name": "Dungeon Delver",
+      "options": [
+        {
+          "name": "Dungeon Delver: Perception",
+          "description": "You gain advantage on Perception checks made to detect hidden objects and on Saving throws made to avoid or resist traps."
+        },
+        {
+          "name": "Dungeon Delver: Resist Traps",
+          "description": "You gain resistance to the damage dealt by traps."
+        }
+      ]
+    },
+    {
+      "name": "Durable",
+      "description": "Your Constitution ability score increases by 1, to a maximum of 20. Regain full hit points every time you take a short rest.",
+      "notes": [
+        "For Wild Shape, this adds +1 Constitution and full HP on a short rest, but does not increase Wild Shape form HP."
+      ]
+    },
+    {
+      "name": "Elemental Adept",
+      "description": "Spells you cast ignore resistance to a damage type of your choice. When you deal that type of damage with a spell, you cannot roll a 1.",
+      "options": [
+        {
+          "name": "Elemental Adept: Acid",
+          "description": "Spells you cast and attacks you make ignore Resistance to Acid damage. In addition, when you deal Acid damage with a spell, you cannot roll a 1."
+        },
+        {
+          "name": "Elemental Adept: Cold",
+          "description": "Spells you cast and attacks you make ignore Resistance to Cold damage. In addition, when you deal Cold damage with a spell, you cannot roll a 1."
+        },
+        {
+          "name": "Elemental Adept: Lightning",
+          "description": "Spells you cast and attacks you make ignore Resistance to Lightning damage. In addition, when you deal Lightning damage with a spell, you cannot roll a 1."
+        },
+        {
+          "name": "Elemental Adept: Fire",
+          "description": "Spells you cast and attacks you make ignore Resistance to Fire damage. In addition, when you deal Fire damage with a spell, you cannot roll a 1."
+        },
+        {
+          "name": "Elemental Adept: Thunder",
+          "description": "Spells you cast and attacks you make ignore Resistance to Thunder damage. In addition, when you deal Thunder damage with a spell, you cannot roll a 1."
+        }
+      ],
+      "notes": [
+        "\"You cannot roll a 1\" means that any 1 rolled is treated as a 2."
+      ]
+    },
+    {
+      "name": "Great Weapon Master",
+      "options": [
+        {
+          "name": "Great Weapon Master: Bonus Attack",
+          "description": "When an attack with a melee weapon lands a Critical Hit or kills a creature, you can make another melee weapon attack as a Bonus action that turn."
+        },
+        {
+          "name": "Great Weapon Master: All In",
+          "description": "When attacking with a Two-Handed or Versatile melee weapon in both hands that you are Proficient with, Attack rolls take a -5 penalty, but their damage increases by 10."
+        }
+      ],
+      "notes": [
+        "All In is a toggleable passive ability."
+      ]
+    },
+    {
+      "name": "Heavily Armoured",
+      "description": "Your Strength ability score increases by 1, to a maximum of 20. Gain Proficiency with Heavy armour.",
+      "prerequisite": "Requires Medium armour Proficiency."
+    },
+    {
+      "name": "Heavy Armour Master",
+      "description": "Your Strength ability score increases by 1, to a maximum of 20. Incoming damage from non-magical attacks also decreases by 3 while you're wearing heavy armour.",
+      "prerequisite": "Requires Heavy armour Proficiency."
+    },
+    {
+      "name": "Lightly Armoured",
+      "description": "Your Strength or Dexterity ability score increases by 1, to a maximum of 20. Gain Proficiency with Light armour."
+    },
+    {
+      "name": "Lucky",
+      "description": "You gain 3 Luck Points that recharge after a Long Rest, which you can use to gain advantage on Attack rolls, Ability checks, or Saving throws, or to make an enemy reroll their Attack roll."
+    },
+    {
+      "name": "Mage Slayer",
+      "options": [
+        {
+          "name": "Mage Slayer: Saving Throw Advantage",
+          "description": "When a creature casts a Spell within melee range of you, you have advantage on any Saving throws against it."
+        },
+        {
+          "name": "Mage Slayer: Attack Caster",
+          "description": "You can use a Reaction to immediately make an attack against the caster if it casts a spell within 1.5m / 5ft of you."
+        },
+        {
+          "name": "Mage Slayer: Break Concentration",
+          "description": "Enemies you hit have disadvantage on Concentration Saving throws."
+        }
+      ]
+    },
+    {
+      "name": "Magic Initiate: Bard",
+      "description": "Learn 2 Cantrips and a 1st-level Spell from the Bard spell list. You can cast the 1st-level Spell once per Long Rest. Your Spellcasting Ability for all three spells is Charisma."
+    },
+    {
+      "name": "Magic Initiate: Cleric",
+      "description": "Learn 2 Cantrips and a 1st-level Spell from the Cleric spell list. You can cast the 1st-level Spell once per Long Rest. Your Spellcasting Ability for all three spells is Wisdom.",
+      "notes": [
+        "While wearing medium armor, the bonus to Armour Class you can gain from your Dexterity modifier also becomes +3 instead of +2. [Needs Verification]",
+        "The AC bonus increase is not listed in-game, and can also be gained by taking the Medium Armour Master feat. [Needs Verification]"
+      ]
+    },
+    {
+      "name": "Magic Initiate: Druid",
+      "description": "Learn 2 Cantrips and a 1st-level Spell from the Druid spell list. You can cast the 1st-level Spell once per Long Rest. Your Spellcasting Ability for all three spells is Wisdom."
+    },
+    {
+      "name": "Magic Initiate: Sorcerer",
+      "description": "Learn 2 Cantrips and a 1st-level Spell from the Sorcerer spell list. You can cast the 1st-level Spell once per Long Rest. Your Spellcasting Ability for all three spells is Charisma."
+    },
+    {
+      "name": "Magic Initiate: Warlock",
+      "description": "Learn 2 Cantrips and a 1st-level Spell from the Warlock spell list. You can cast the 1st-level Spell once per Long Rest. Your Spellcasting Ability for all three spells is Charisma."
+    },
+    {
+      "name": "Magic Initiate: Wizard",
+      "description": "Learn 2 Cantrips and a 1st-level Spell from the Wizard spell list. You can cast the 1st-level Spell once per Long Rest. Your Spellcasting Ability for all three spells is Intelligence."
+    },
+    {
+      "name": "Martial Adept",
+      "description": "Learn two Manoeuvres from the Battle Master archetype and receive 1 (additional) Superiority Die to fuel them. You regain expended Superiority Dice after a Short or Long Rest."
+    },
+    {
+      "name": "Medium Armour Master",
+      "description": "When you wear medium armour, it doesn't impose disadvantage on Stealth checks. The bonus to Armour Class you can gain from your Dexterity modifier also becomes +3 instead of +2.",
+      "prerequisite": "Requires Medium armour Proficiency."
+    },
+    {
+      "name": "Mobile",
+      "options": [
+        {
+          "name": "Mobile",
+          "description": "Your Movement Speed increases by 3 m / 10 ft."
+        },
+        {
+          "name": "Mobile: Evade Difficult Terrain",
+          "description": "When you use the Dash action, Difficult Terrain doesn't slow you down."
+        },
+        {
+          "name": "Mobile: Evade Opportunity Attack",
+          "description": "If you move after making a melee attack, you don't provoke an Opportunity Attack from that target."
+        }
+      ]
+    },
+    {
+      "name": "Moderately Armoured",
+      "description": "Your Strength or Dexterity ability score increases by 1, to a maximum of 20. Gain Proficiency with Medium armour and Shields.",
+      "prerequisite": "Requires Light armour Proficiency."
+    },
+    {
+      "name": "Performer",
+      "description": "Your Charisma ability score increases by 1, to a maximum of 20. Gain Musical Instrument Proficiency."
+    },
+    {
+      "name": "Polearm Master",
+      "options": [
+        {
+          "name": "Polearm Master: Bonus Attack",
+          "description": "When attacking with a Glaive, Halberd, Pike, Quarterstaff, or Spear, you can use a Bonus action to attack with the butt of your weapon."
+        },
+        {
+          "name": "Polearm Master: Opportunity Attack",
+          "description": "You can also make an Opportunity Attack when a target comes within range."
+        }
+      ],
+      "notes": [
+        "The Polearm Master: Bonus Attack deals 1d4 + Strength Modifier bludgeoning damage if Strength is used for the attack roll. However, if another ability is used for the attack roll (such as through Shillelagh or Pact of the Blade) then Dexterity will be used for the damage roll.",
+        "The Polearm Master: Bonus Attack often does not apply additional damage-on-hit effects, such as Hunter's Mark or the additional damage from Great Weapon Master.",
+        "Polearm Master works with Pikes even though this is not stated in-game."
+      ]
+    },
+    {
+      "name": "Resilient",
+      "description": "You increase an Ability by 1, to a maximum of 20. Gain Proficiency in that ability's Saving Throws.",
+      "options": [
+        {
+          "name": "Resilient: Strength",
+          "description": "You increase an Ability by 1, to a maximum of 20.\nGain Proficiency in that ability's Saving Throws."
+        },
+        {
+          "name": "Resilient: Dexterity",
+          "description": "You increase your Dexterity by 1, to a maximum of 20.\nGain Proficiency in Dexterity Saving Throws."
+        },
+        {
+          "name": "Resilient: Constitution",
+          "description": "You increase your Constitution by 1, to a maximum of 20.\nGain Proficiency in Constitution Saving Throws."
+        },
+        {
+          "name": "Resilient: Intelligence",
+          "description": "You increase your Intelligence by 1, to a maximum of 20.\nGain Proficiency in Intelligence Saving Throws."
+        },
+        {
+          "name": "Resilient: Wisdom",
+          "description": "You increase your Wisdom by 1, to a maximum of 20.\nGain Proficiency in Wisdom Saving Throws."
+        },
+        {
+          "name": "Resilient: Charisma",
+          "description": "You increase your Charisma by 1, to a maximum of 20.\nGain Proficiency in Charisma Saving Throws."
+        }
+      ],
+      "notes": [
+        "This Ability increase applies to druids in Wild Shape."
+      ]
+    },
+    {
+      "name": "Ritual Caster",
+      "description": "You learn two Ritual spells of your choice.",
+      "notes": [
+        "The available spells are:",
+        "Enhance Leap",
+        "Disguise Self",
+        "Find Familiar",
+        "Longstrider",
+        "Speak with Animals",
+        "Speak with Dead"
+      ]
+    },
+    {
+      "name": "Savage Attacker",
+      "description": "When making melee weapon attacks, you roll your damage dice twice and use the highest result."
+    },
+    {
+      "name": "Sentinel",
+      "options": [
+        {
+          "name": "Sentinel: Vengeance",
+          "description": "When an enemy in melee range attacks an ally, you can use a Reaction to make a weapon attack against that enemy. Target ally must not have the Sentinel feat."
+        },
+        {
+          "name": "Sentinel: Snare",
+          "description": "When you hit a creature with an Attack of Opportunity, it can no longer move for the rest of its turn."
+        },
+        {
+          "name": "Sentinel: Opportunity Advantage",
+          "description": "You gain advantage on Opportunity Attacks."
+        }
+      ]
+    },
+    {
+      "name": "Sharpshooter",
+      "options": [
+        {
+          "name": "Sharpshooter: Low Ground",
+          "description": "Your ranged weapon attacks are not penalized for High Ground Rules."
+        },
+        {
+          "name": "Sharpshooter: All In",
+          "description": "Ranged weapon attacks with weapons you are Proficient with have a -5 penalty to their Attack roll, but deal an additional 10 damage."
+        }
+      ],
+      "notes": [
+        "All In is a toggleable passive ability."
+      ]
+    },
+    {
+      "name": "Shield Master",
+      "description": "Gain a +2 bonus to Dexterity saving throw when wielding a Shield.",
+      "options": [
+        {
+          "name": "Shield Master: Block",
+          "description": "If a Spell forces you to make a Dexterity saving throw, you can use your Reaction to shield yourself and diminish the effect's damage."
+        }
+      ],
+      "notes": [
+        "On a failed save, you only take half damage.",
+        "On a successful save, you don't take any damage, even if you normally would.",
+        "BUG: As of Hotfix 25, this feat does not reduce the damage taken on a failed save.",
+        "Unlike the DnD counterpart, this feat doesn't take shield AC into account and instead only offers a flat bonus to Dexterity saving throw."
+      ]
+    },
+    {
+      "name": "Skilled",
+      "description": "You gain Proficiency in 3 Skills of your choice."
+    },
+    {
+      "name": "Spell Sniper",
+      "description": "You learn a cantrip, and the number you need to roll a Critical Hit while attacking with a Spell is reduced by 1. This effect can stack.",
+      "notes": [
+        "The available cantrips are:",
+        "Bone Chill",
+        "Eldritch Blast",
+        "Fire Bolt",
+        "Ray of Frost",
+        "Shocking Grasp",
+        "Thorn Whip",
+        "These cantrips use the character's Spellcasting Ability. For example, if a Cleric chooses Eldritch Blast with this feat, they use their Wisdom modifier and not their Charisma modifier.",
+        "All available cantrips are Spell Attacks and use Attack roll."
+      ]
+    },
+    {
+      "name": "Tavern Brawler",
+      "description": "Your Strength or Constitution ability score increases by 1, to a maximum of 20. When you make an unarmed attack, use an improvised weapon, or throw something, your strength modifier is added twice to the damage and Attack roll.",
+      "notes": [
+        "Unarmed attacks that use Dexterity as a modifier still gain the strength modifier as a bonus with this feat and thus don't get the Dexterity modifier applied twice to the attack."
+      ]
+    },
+    {
+      "name": "Tough",
+      "description": "Hit Point maximum increased by 2 for each level."
+    },
+    {
+      "name": "War Caster",
+      "description": "You gain advantage on Saving throws to maintain Concentration on a Spell. You can also use a Reaction to cast Shocking Grasp at a target moving out of melee range.",
+      "notes": [
+        "This feat does not grant the ability to use Shocking Grasp at will. Unless you know it from another source, you can only use it as an Attack of Opportunity.",
+        "Casting Shocking Grasp as an Attack of Opportunity uses the character's Spellcasting Ability. For example, if a Cleric casts Shocking Grasp with this feat, they use their Wisdom modifier."
+      ]
+    },
+    {
+      "name": "Weapon Master",
+      "description": "Your Strength or Dexterity ability score increases by 1, to a maximum of 20. Gain Proficiency with four Weapon types of your choice."
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "backgrounds": [
+    {
+      "name": "Acolyte",
+      "description": "You have spent your life in service to a temple, learning sacred rites and providing sacrifices to the god or gods you worship. Serving the gods and discovering their sacred works will guide you to greatness.",
+      "skill_proficiencies": ["Insight", "Religion"],
+      "characters": ["Shadowheart", "Zenith Feur'sel"]
+    },
+    {
+      "name": "Charlatan",
+      "description": "You're an expert in manipulation, prone to exaggeration and more than happy to profit from it. Bending the truth and turning allies against each other will lead to greater success down the road.",
+      "skill_proficiencies": ["Deception", "Sleight of Hand"],
+      "characters": ["Astarion", "Kree Derryck"]
+    },
+    {
+      "name": "Criminal",
+      "description": "You have a history of breaking the law and survive by leveraging less-than-legal connections. Profiting from criminal enterprise will lead to greater opportunities in the future.",
+      "skill_proficiencies": ["Deception", "Stealth"],
+      "characters": ["Ver'yll Wenkiir"]
+    },
+    {
+      "name": "Entertainer",
+      "description": "You live to sway and subvert your audience, engaging common crowds and high society alike. Preserving art and bringing joy to the hapless and downtrodden heightens your charismatic aura.",
+      "skill_proficiencies": ["Acrobatics", "Performance"],
+      "characters": ["Brinna Brightsong"]
+    },
+    {
+      "name": "Folk Hero",
+      "description": "You're a champion of the common people, challenging tyrants and monsters to protect the helpless. Saving innocents in imminent danger will make your legend grow.",
+      "skill_proficiencies": ["Animal Handling", "Survival"],
+      "characters": ["Minsc", "Wyll", "Danton"]
+    },
+    {
+      "name": "Guild Artisan",
+      "description": "Your skill in a particular craft has earned you membership in a mercantile guild, offering privileges and protection while engaging in your art. Repairing and discovering rare crafts will bring new inspiration.",
+      "skill_proficiencies": ["Insight", "Persuasion"],
+      "characters": ["Jacelyn"]
+    },
+    {
+      "name": "Haunted One",
+      "description": "A wicked moment, person, or thing that cannot be slain by sword or spell haunts your mind and flickers in your peripheral vision. You carry it wherever your adventure takes you - or perhaps it carries you.",
+      "skill_proficiencies": ["Medicine", "Intimidation"],
+      "characters": ["The Dark Urge"],
+      "notes": "This background is exclusive to the Dark Urge."
+    },
+    {
+      "name": "Noble",
+      "description": "You were raised in a family among the social elite, accustomed to power and privilege. Accumulating renown, power, and loyalty will raise your status.",
+      "skill_proficiencies": ["History", "Persuasion"],
+      "characters": ["Minthara", "Kerz"]
+    },
+    {
+      "name": "Outlander",
+      "description": "You grew up in the wilds, learning to survive far from the comforts of civilisation. Surviving unusual hazards of the wild will enhance your prowess and understanding.",
+      "skill_proficiencies": ["Athletics", "Survival"],
+      "characters": ["Halsin", "Karlach", "Eldra Luthrinn", "Sina'zith"]
+    },
+    {
+      "name": "Sage",
+      "description": "You are curious and well-read, with an unending thirst for knowledge. Learning about rare lore of the world will inspire you to put this knowledge to greater purpose.",
+      "skill_proficiencies": ["Arcana", "History"],
+      "characters": ["Gale", "Sir Fuzzalump"]
+    },
+    {
+      "name": "Soldier",
+      "description": "You are trained in battlefield tactics and combat, having served in a militia, mercenary company, or officer corps. Show smart tactics and bravery on the battlefield to enhance your prowess.",
+      "skill_proficiencies": ["Athletics", "Intimidation"],
+      "characters": ["Jaheira", "Lae'zel", "Varanna Sunblossom"]
+    },
+    {
+      "name": "Urchin",
+      "description": "After surviving a poor and bleak childhood, you know how to make the most out of very little. Using your street smarts bolsters your spirit for the journey ahead.",
+      "skill_proficiencies": ["Sleight of Hand", "Stealth"],
+      "characters": ["Maddala Deadeye"]
+    }
+  ]
+}
