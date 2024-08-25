@@ -1,0 +1,677 @@
+{
+  "races": [
+    {
+      "name": "Half-Elf",
+      "description": "Curious, ambitious, and versatile, half-elves are welcome everywhere, but struggle without a community to call their own.",
+      "base_speed": "9 m / 30 ft",
+      "size": "Medium",
+      "image_url": "Race_Half-Elf.png",
+      "racial_features": [
+        {
+          "name": "Civil Militia",
+          "description": "Weapon Proficiency with Spears, Pikes, Halberds, Glaives, Light armour, and Shields."
+        },
+        {
+          "name": "Darkvision",
+          "description": "Can see in the dark up to 12 m / 40 ft."
+        },
+        {
+          "name": "Fey Ancestry",
+          "description": "Advantage on Saving throws against being Charmed, and magic can't put you to Sleep."
+        }
+      ],
+      "subraces": [
+        {
+          "name": "High Half-Elf",
+          "description": "A touch of the Feywild remains in half-elves with this bloodline, and even those untrained in magic possess a hint of wild power.",
+          "features": [
+            {
+              "name": "Cantrip Selection",
+              "description": "Choose 1 Cantrip from the Wizard spell list."
+            }
+          ],
+          "spells": []
+        },
+        {
+          "name": "Wood Half-Elf",
+          "description": "Like their wood elf parent, these half-elves have a quickened stride and an eye for stealth.",
+          "features": [
+            {
+              "name": "Proficiency",
+              "description": "Proficiency in Stealth checks."
+            },
+            {
+              "name": "Fleet of Foot",
+              "description": "Your Movement Speed is further increased by 1.5 m / 5 ft."
+            }
+          ],
+          "spells": []
+        },
+        {
+          "name": "Drow Half-Elf",
+          "description": "Most half-drow result from liaisons between Seldarine drow and surfacers.",
+          "features": [
+            {
+              "name": "Drow Magic",
+              "description": "Access to Dancing Lights at level 1, Faerie Fire at level 3, and Darkness at level 5."
+            }
+          ],
+          "spells": [
+            {
+              "name": "Dancing Lights",
+              "level": 0,
+              "casting_stat": "Charisma",
+              "recharge_type": "-"
+            },
+            {
+              "name": "Faerie Fire",
+              "level": 1,
+              "casting_stat": "Charisma",
+              "recharge_type": "Long Rest"
+            },
+            {
+              "name": "Darkness",
+              "level": 2,
+              "casting_stat": "Charisma",
+              "recharge_type": "Long Rest"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Human",
+      "description": "The most common face in Faerûn, humans are known for their tenacity, creativity, and endless capacity for growth.",
+      "base_speed": "9 m / 30 ft",
+      "size": "Medium",
+      "image_url": "Race_Human.png",
+      "racial_features": [
+        {
+          "name": "Civil Militia",
+          "description": "Weapon Proficiency with Spears, Pikes, Halberds, Glaives, Light armour, and Shields."
+        },
+        {
+          "name": "Human Versatility",
+          "description": "Select an additional Skill to be Proficient in. Your carrying capacity is increased by a quarter."
+        }
+      ],
+      "proficiencies": [
+        {
+          "name": "Spears"
+        },
+        {
+          "name": "Pikes"
+        }
+      ]
+    },
+    {
+      "name": "Elf",
+      "description": "With ethereal countenances and long lifespans, elves are at home with nature's power, flourishing in light and dark alike.",
+      "base_speed": "9 m / 30 ft",
+      "size": "Medium",
+      "image_url": "Race_Elf.png",
+      "racial_features": [
+        {
+          "name": "Keen Senses",
+          "description": "You gain Proficiency in the Perception skill."
+        },
+        {
+          "name": "Elven Weapon Training",
+          "description": "You have Proficiency with Longswords, Shortswords, Longbows, and Shortbows."
+        },
+        {
+          "name": "Darkvision",
+          "description": "Can see in the dark up to 12 m / 40 ft."
+        },
+        {
+          "name": "Fey Ancestry",
+          "description": "Advantage on Saving throws against being Charmed, and magic can't put you to Sleep."
+        }
+      ],
+      "subraces": [
+        {
+          "name": "High Elf",
+          "description": "Heirs of the mystical Feywild, high elves value magic in all its forms, and even those who do not study spellcraft can manipulate the Weave.",
+          "features": [
+            {
+              "name": "Cantrip Selection",
+              "description": "Choose 1 Cantrip from the Wizard spell list."
+            }
+          ],
+          "spells": [
+            { "name": "Acid Splash", "level": 0, "casting_stat": "Intelligence", "recharge_type": "-" },
+            { "name": "Blade Ward", "level": 0, "casting_stat": "Intelligence", "recharge_type": "-" },
+            { "name": "Bone Chill", "level": 0, "casting_stat": "Intelligence", "recharge_type": "-" },
+            { "name": "Dancing Lights", "level": 0, "casting_stat": "Intelligence", "recharge_type": "-" },
+            { "name": "Fire Bolt", "level": 0, "casting_stat": "Intelligence", "recharge_type": "-" },
+            { "name": "Friends", "level": 0, "casting_stat": "Intelligence", "recharge_type": "-" },
+            { "name": "Light", "level": 0, "casting_stat": "Intelligence", "recharge_type": "-" },
+            { "name": "Mage Hand", "level": 0, "casting_stat": "Intelligence", "recharge_type": "-" },
+            { "name": "Minor Illusion", "level": 0, "casting_stat": "Intelligence", "recharge_type": "-" },
+            { "name": "Poison Spray", "level": 0, "casting_stat": "Intelligence", "recharge_type": "-" },
+            { "name": "Ray of Frost", "level": 0, "casting_stat": "Intelligence", "recharge_type": "-" },
+            { "name": "Shocking Grasp", "level": 0, "casting_stat": "Intelligence", "recharge_type": "-" },
+            { "name": "True Strike", "level": 0, "casting_stat": "Intelligence", "recharge_type": "-" }
+          ]
+        },
+        {
+          "name": "Wood Elf",
+          "description": "These elves spend their reclusive lives in Faerûn's forests. Decades of training in archery and camouflage are enhanced by an otherworldly swiftness.",
+          "features": [
+            {
+              "name": "Proficiency",
+              "description": "Proficiency in Stealth checks."
+            },
+            {
+              "name": "Fleet of Foot",
+              "description": "Your Movement Speed is increased by 1.5 m / 5 ft."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Drow",
+      "description": "Driven to the Underdark, most drow have adopted a ruthless pragmatism. While the Lolth-sworn delight in the goddess' evil tenets, the Seldarine reject Her attempt to overthrow the leader of the elven pantheon.",
+      "base_speed": "9 m / 30 ft",
+      "size": "Medium",
+      "image_url": "Race_Drow.png",
+      "racial_features": [
+        {
+          "name": "Drow Weapon Training",
+          "description": "You have Proficiency with Rapiers, Shortswords, and Hand Crossbows."
+        },
+        {
+          "name": "Superior Darkvision",
+          "description": "Can see in the dark up to 24 m / 80 ft."
+        },
+        {
+          "name": "Fey Ancestry",
+          "description": "Advantage on Saving throws against being Charmed, and magic can't put you to Sleep."
+        },
+        {
+          "name": "Keen Senses",
+          "description": "You gain Proficiency in the Perception skill."
+        },
+        {
+          "name": "Drow Magic",
+          "description": "Access to Dancing Lights at level 1, Faerie Fire at level 3, and Darkness at level 5."
+        }
+      ],
+      "spells": [
+        { "name": "Dancing Lights", "level": 0, "casting_stat": "Charisma", "recharge_type": "-" },
+        { "name": "Faerie Fire", "level": 1, "casting_stat": "Charisma", "recharge_type": "Long Rest" },
+        { "name": "Darkness", "level": 2, "casting_stat": "Charisma", "recharge_type": "Long Rest" }
+      ],
+      "subraces": [
+        {
+          "name": "Lolth-sworn Drow",
+          "description": "Raised by Lolth's cult in the city of Menzoberranzan, these drow embody the virtues of their corrupt and merciless goddess.",
+          "features": [
+            {
+              "name": "Red Eyes",
+              "description": "By default, Lolth-sworn Drow have red eyes."
+            },
+            {
+              "name": "Locked Dialogue",
+              "description": "Lolth-sworn Drow gain access to certain locked dialogue choices."
+            }
+          ]
+        },
+        {
+          "name": "Seldarine Drow",
+          "description": "Seldarine drow can be found seeking allies from all over Faerûn, aiming to settle their conflict with Lolth - and each other - by any means necessary.",
+          "features": [
+            {
+              "name": "Non-Red Eyes",
+              "description": "By default, Seldarine Drow do not have red eyes."
+            },
+            {
+              "name": "Locked Dialogue",
+              "description": "Seldarine Drow gain access to certain locked dialogue choices."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Half-Orc",
+      "description": "Creatures of intense emotion, half-orcs are more inclined to act than contemplate - whether the rage burning their bodies compels them to fight, or the love filling their hearts inspires acts of incredible kindness.",
+      "base_speed": "9 m / 30 ft",
+      "size": "Medium",
+      "image_url": "Race_Half-Orc.png",
+      "racial_features": [
+        {
+          "name": "Menacing",
+          "description": "You gain Proficiency in the Intimidation skill."
+        },
+        {
+          "name": "Darkvision",
+          "description": "Can see in the dark up to 12 m / 40 ft."
+        },
+        {
+          "name": "Relentless Endurance",
+          "description": "If you reach 0 hit points, you regain 1 hit point instead of becoming Downed."
+        },
+        {
+          "name": "Savage Attacks",
+          "description": "When you land a Critical Hit with a melee weapon attack, you deal an extra dice of weapon damage."
+        }
+      ],
+      "proficiencies": [
+        {
+          "name": "Intimidation"
+        }
+      ]
+    },
+    {
+      "name": "Halfling",
+      "description": "Small yet capable, halflings prefer the comforts of home and hearth - but their natural luck and dexterity makes them fine adventurers.",
+      "base_speed": "7.5 m / 25 ft",
+      "size": "Small",
+      "image_url": "Race_Halfling.png",
+      "racial_features": [
+        {
+          "name": "Halfling Luck",
+          "description": "When you roll a 1 for an Attack roll, Ability check, or Saving throw, you can reroll the dice and must use the new roll."
+        },
+        {
+          "name": "Brave",
+          "description": "You have Advantage on Saving Throws against being Frightened."
+        }
+      ],
+      "subraces": [
+        {
+          "name": "Lightfoot Halfling",
+          "description": "Stealthy but social, these halflings travel all over Faerûn to make names for themselves.",
+          "features": [
+            {
+              "name": "Naturally Stealthy",
+              "description": "Your nimble nature makes you skilled at concealment. You have Advantage on Stealth Checks."
+            }
+          ]
+        },
+        {
+          "name": "Strongheart Halfling",
+          "description": "Legend has it that dwarven blood gave stronghearts their hardiness. Resistant to poison and wellsprings of endurance, these halflings easily hold their own.",
+          "features": [
+            {
+              "name": "Strongheart Resilience",
+              "description": "You have Advantage on Saving Throws against being Poisoned and Resistance to Poison damage."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Dwarf",
+      "description": "As durable and unyielding as their homes of stone, dwarves are some of the finest warriors, miners, and smiths of Faerûn.",
+      "base_speed": "7.5 m / 25 ft",
+      "size": "Medium",
+      "image_url": "Race_Dwarf.png",
+      "racial_features": [
+        {
+          "name": "Dwarven Combat Training",
+          "description": "You have Proficiency with Battleaxes, Handaxes, Light Hammers, and Warhammers."
+        },
+        {
+          "name": "Darkvision",
+          "description": "Can see in the dark up to 12 m / 40 ft."
+        },
+        {
+          "name": "Dwarven Resilience",
+          "description": "You have Advantage on Saving throws against being Poisoned and Resistance against Poison damage."
+        }
+      ],
+      "subraces": [
+        {
+          "name": "Gold Dwarf",
+          "description": "These dwarves are known for their confidence and keen intuition. The culture of their Deep Kingdom values family, ritual, and fine craftsmanship.",
+          "features": [
+            {
+              "name": "Dwarven Toughness",
+              "description": "Your Hit Point maximum increases by 1, and increases by 1 again every time you gain a level."
+            }
+          ]
+        },
+        {
+          "name": "Shield Dwarf",
+          "description": "Great losses in ancient wars against goblins and orcs have led these dwarves to adopt a cynical mindset, but they will endure anything to restore their ancestral homelands.",
+          "features": [
+            {
+              "name": "Dwarven Armour Training",
+              "description": "You have Armour Proficiency with Light armour and Medium armour."
+            }
+          ]
+        },
+        {
+          "name": "Duergar",
+          "description": "Once enslaved by the eldritch mind flayers, duergar adapted to freedom with harsh practicality. Their cold demeanours and gift of stealth are well-known throughout the Underdark.",
+          "features": [
+            {
+              "name": "Superior Darkvision",
+              "description": "Can see in the dark up to 24 m / 80 ft."
+            },
+            {
+              "name": "Duergar Resilience",
+              "description": "You have Advantage on Saving throws against illusions and against being Charmed or Paralysed."
+            }
+          ],
+          "spells": [
+            { "name": "Enlarge", "level": 1, "casting_stat": "-", "recharge_type": "Long Rest" },
+            { "name": "Invisibility", "level": 2, "casting_stat": "-", "recharge_type": "Per battle, does not use Spell Slots" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Gnome",
+      "description": "Small, clever, and energetic, gnomes use their long lives to explore Faerûn's brightest corners and darkest depths.",
+      "base_speed": "7.5 m / 25 ft",
+      "size": "Small",
+      "image_url": "Race_Gnome.png",
+      "racial_features": [
+        {
+          "name": "Gnome Cunning",
+          "description": "You have Advantage on Intelligence, Wisdom, and Charisma Saving Throws."
+        },
+        {
+          "name": "Shortened Stride",
+          "description": "Your movement speed is 7.5m / 25ft."
+        }
+      ],
+      "subraces": [
+        {
+          "name": "Rock Gnome",
+          "description": "The most commonly seen gnomes on Faerûn's surface, rock gnomes are named as such for their hardiness and affinity for metal.",
+          "features": [
+            {
+              "name": "Darkvision",
+              "description": "Can see in the dark up to 12 m / 40 ft."
+            },
+            {
+              "name": "Artificer's Lore",
+              "description": "Add twice your Proficiency Bonus to History checks."
+            }
+          ]
+        },
+        {
+          "name": "Forest Gnome",
+          "description": "Even smaller than their cousins and twice as reclusive, forest gnomes are a rare sight in Faerûn. They master magic and craftsmanship in their distant, idyllic groves.",
+          "features": [
+            {
+              "name": "Darkvision",
+              "description": "Can see in the dark up to 12 m / 40 ft."
+            },
+            {
+              "name": "Speak with Animals",
+              "description": "Gain the ability to comprehend and communicate with beasts. Recharge: Long rest."
+            }
+          ]
+        },
+        {
+          "name": "Deep Gnome",
+          "description": "More guarded than their surface cousins, deep gnomes survive in the Underdark with darkvision and skilful stealth.",
+          "features": [
+            {
+              "name": "Superior Darkvision",
+              "description": "Can see in the dark up to 24 m / 80 ft."
+            },
+            {
+              "name": "Stone Camouflage",
+              "description": "You have Advantage on Stealth checks."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tiefling",
+      "description": "Descended from devils of the Nine Hells, tieflings face constant suspicion in Faerûn. Thankfully, their arcane abilities make them natural survivors.",
+      "base_speed": "9 m / 30 ft",
+      "size": "Medium",
+      "image_url": "Race_Tiefling.png",
+      "racial_features": [
+        {
+          "name": "Darkvision",
+          "description": "Can see in the dark up to 12 m / 40 ft."
+        },
+        {
+          "name": "Hellish Resistance",
+          "description": "Your blood protects you from flame, abyssal or otherwise. Gain Resistance to Fire damage, taking only half damage from it."
+        }
+      ],
+      "subraces": [
+        {
+          "name": "Asmodeus Tiefling",
+          "description": "Bound to Nessus, the deepest layer of the Hells, these tieflings inherited the ability to wield fire and darkness from the archdevil Asmodeus' infernal bloodline.",
+          "features": [
+            {
+              "name": "Infernal Legacy",
+              "description": "Grants specific spells as you level up."
+            }
+          ],
+          "spells": [
+            { "name": "Produce Flame", "level": 0, "casting_stat": "-", "recharge_type": "-" },
+            { "name": "Hellish Rebuke", "level": 1, "casting_stat": "-", "recharge_type": "Long Rest" },
+            { "name": "Darkness", "level": 2, "casting_stat": "-", "recharge_type": "Long Rest" }
+          ]
+        },
+        {
+          "name": "Mephistopheles Tiefling",
+          "description": "Descended from the archdevil Mephistopheles, these tieflings are gifted with a particular affinity for arcane magic.",
+          "features": [
+            {
+              "name": "Legacy of Cania",
+              "description": "Grants specific spells as you level up."
+            }
+          ],
+          "spells": [
+            { "name": "Mage Hand", "level": 0, "casting_stat": "-", "recharge_type": "-" },
+            { "name": "Burning Hands", "level": 1, "casting_stat": "Charisma", "recharge_type": "Long Rest" },
+            { "name": "Flame Blade", "level": 2, "casting_stat": "Charisma", "recharge_type": "Long Rest" }
+          ]
+        },
+        {
+          "name": "Zariel Tiefling",
+          "description": "Tieflings from Zariel's bloodline are empowered with martial strength, and can channel searing flame to punish their enemies.",
+          "features": [
+            {
+              "name": "Legacy of Avernus",
+              "description": "Grants specific spells as you level up."
+            }
+          ],
+          "spells": [
+            { "name": "Thaumaturgy", "level": 0, "casting_stat": "-", "recharge_type": "-" },
+            { "name": "Searing Smite", "level": 1, "casting_stat": "-", "recharge_type": "Long Rest" },
+            { "name": "Branding Smite", "level": 2, "casting_stat": "-", "recharge_type": "Long Rest" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Githyanki",
+      "description": "With a ruthlessness borne from mind flayer enslavement, githyanki ride the Astral Sea atop red dragons, bringing their silver swords and psionic might to bear against any trace of the illithid menace.",
+      "base_speed": "9 m / 30 ft",
+      "size": "Medium",
+      "image_url": "Race_Githyanki.png",
+      "racial_features": [
+        {
+          "name": "Astral Knowledge",
+          "description": "Gain Proficiency in all Skills corresponding to a chosen Ability (Recharge: Long rest)."
+        },
+        {
+          "name": "Martial Prodigy",
+          "description": "Armour proficiency with Light armour and Medium armour, as well as Proficiency with Shortswords, Longswords, and Greatswords."
+        }
+      ],
+      "spells": [
+        { "name": "Mage Hand", "level": 0, "casting_stat": "-", "recharge_type": "-" },
+        { "name": "Enhance Leap", "level": 1, "casting_stat": "-", "recharge_type": "Long Rest" },
+        { "name": "Misty Step", "level": 2, "casting_stat": "-", "recharge_type": "Long Rest" }
+      ],
+      "proficiencies": [
+        { "name": "Light armour" },
+        { "name": "Medium armour" },
+        { "name": "Shortswords" },
+        { "name": "Longswords" },
+        { "name": "Greatswords" }
+      ]
+    },
+    {
+      "name": "Dragonborn",
+      "description": "A proud race that values clan and skills above all else. Once enslaved by dragons, they strive to be self-sufficient, not wanting to be beholden to anyone, not even the gods.",
+      "base_speed": "9 m / 30 ft",
+      "size": "Medium",
+      "image_url": "Race_Dragonborn.png",
+      "racial_features": [
+        {
+          "name": "Draconic Ancestry",
+          "description": "Your resistance and breath weapon type depend on your draconic ancestry."
+        }
+      ],
+      "subraces": [
+        {
+          "name": "Black Dragonborn",
+          "description": "Despite no ancestral links to the mighty creatures, these dragonborn share the charcoal colouration and fizzling, acrid breath of black dragons.",
+          "features": [
+            {
+              "name": "Acid Breath",
+              "description": "Spew forth a column of acid, dealing 2d6 Acid damage."
+            },
+            {
+              "name": "Draconic Ancestry (Acid)",
+              "description": "The blood of ancient dragons flows through your veins. You are Resistant to Acid damage."
+            }
+          ]
+        },
+        {
+          "name": "Blue Dragonborn",
+          "description": "Despite no ancestral links to the mighty creatures, these dragonborn share the deep sapphire scales and charged, crackling breath of blue dragons.",
+          "features": [
+            {
+              "name": "Lightning Breath",
+              "description": "Spew forth a column of lightning, dealing 2d6 Lightning damage."
+            },
+            {
+              "name": "Draconic Ancestry (Lightning)",
+              "description": "The blood of ancient dragons flows through your veins. You are Resistant to Lightning damage."
+            }
+          ]
+        },
+        {
+          "name": "Brass Dragonborn",
+          "description": "Despite no ancestral links to the mighty creatures, these dragonborn share the burnished ochre hue and flickering, fiery breath of brass dragons.",
+          "features": [
+            {
+              "name": "Fire Breath (Line)",
+              "description": "Spew forth a column of fire, dealing 2d6 Fire damage."
+            },
+            {
+              "name": "Draconic Ancestry (Fire)",
+              "description": "The blood of ancient dragons flows through your veins. You are Resistant to Fire damage."
+            }
+          ]
+        },
+        {
+          "name": "Bronze Dragonborn",
+          "description": "Despite no ancestral links to the mighty creatures, these dragonborn share the shining sepia scales and sparking breath of bronze dragons.",
+          "features": [
+            {
+              "name": "Lightning Breath",
+              "description": "Spew forth a column of lightning, dealing 2d6 Lightning damage."
+            },
+            {
+              "name": "Draconic Ancestry (Lightning)",
+              "description": "The blood of ancient dragons flows through your veins. You are Resistant to Lightning damage."
+            }
+          ]
+        },
+        {
+          "name": "Copper Dragonborn",
+          "description": "Despite no ancestral links to the mighty creatures, these dragonborn share the pink-gold colouration and corrosive breath of copper dragons.",
+          "features": [
+            {
+              "name": "Acid Breath",
+              "description": "Spew forth a column of acid, dealing 2d6 Acid damage."
+            },
+            {
+              "name": "Draconic Ancestry (Acid)",
+              "description": "The blood of ancient dragons flows through your veins. You are Resistant to Acid damage."
+            }
+          ]
+        },
+        {
+          "name": "Gold Dragonborn",
+          "description": "Despite no ancestral links to the mighty creatures, these dragonborn share the resplendent shine and roiling, blazing breath of gold dragons.",
+          "features": [
+            {
+              "name": "Fire Breath (Cone)",
+              "description": "Spew forth a cone of fire, dealing 2d6 Fire damage."
+            },
+            {
+              "name": "Draconic Ancestry (Fire)",
+              "description": "The blood of ancient dragons flows through your veins. You are Resistant to Fire damage."
+            }
+          ]
+        },
+        {
+          "name": "Green Dragonborn",
+          "description": "Despite no ancestral links to the mighty creatures, these dragonborn share the brilliant emerald aspect and stinking, putrid breath of green dragons.",
+          "features": [
+            {
+              "name": "Poison Breath",
+              "description": "Spew forth a cone of poison, dealing 2d6 Poison damage."
+            },
+            {
+              "name": "Draconic Ancestry (Poison)",
+              "description": "The blood of ancient dragons flows through your veins. You are Resistant to Poison damage."
+            }
+          ]
+        },
+        {
+          "name": "Red Dragonborn",
+          "description": "Despite no ancestral links to the mighty creatures, these dragonborn share the bright scarlet likeness and roiling, burning breath of red dragons.",
+          "features": [
+            {
+              "name": "Fire Breath (Cone)",
+              "description": "Spew forth a cone of fire, dealing 2d6 Fire damage."
+            },
+            {
+              "name": "Draconic Ancestry (Fire)",
+              "description": "The blood of ancient dragons flows through your veins. You are Resistant to Fire damage."
+            }
+          ]
+        },
+        {
+          "name": "Silver Dragonborn",
+          "description": "Despite no ancestral links to the mighty creatures, these dragonborn share the glinting shine and scorching cold breath of silver dragons.",
+          "features": [
+            {
+              "name": "Frost Breath",
+              "description": "Spew forth a cone of ice, dealing 2d6 Cold damage."
+            },
+            {
+              "name": "Draconic Ancestry (Cold)",
+              "description": "The blood of ancient dragons flows through your veins. You are Resistant to Cold damage."
+            }
+          ]
+        },
+        {
+          "name": "White Dragonborn",
+          "description": "Despite no ancestral links to the mighty creatures, these dragonborn share the snowy aspect and frosty breath of white dragons.",
+          "features": [
+            {
+              "name": "Frost Breath",
+              "description": "Spew forth a cone of ice, dealing 2d6 Cold damage."
+            },
+            {
+              "name": "Draconic Ancestry (Cold)",
+              "description": "The blood of ancient dragons flows through your veins. You are Resistant to Cold damage."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
