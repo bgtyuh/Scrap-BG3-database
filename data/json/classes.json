@@ -101,7 +101,7 @@
                             "feature_description": "Move through difficult terrain without slowing down."
                         }
                     ],
-                    "image_path": "150px-Class_Barbarian_Wildheart_Badge_Icon.png"
+                    "image_path": "160px-Class_Barbarian_Wildheart_Badge_Icon.png"
                 },
                 {
                     "name": "Berserker",
@@ -123,7 +123,7 @@
                             "feature_description": "Frighten a creature within range using your presence."
                         }
                     ],
-                    "image_path": "150px-Class_Barbarian_Berserker_Badge_Icon.png"
+                    "image_path": "160px-Class_Barbarian_Berserker_Badge_Icon.png"
                 },
                 {
                     "name": "Wild Magic",
@@ -145,7 +145,7 @@
                             "feature_description": "If you take damage while raging, you can cause a random wild magic effect to occur."
                         }
                     ],
-                    "image_path": "150px-Class_Barbarian_Wild_Magic_Badge_Icon.png"
+                    "image_path": "160px-Class_Barbarian_Wild_Magic_Badge_Icon.png"
                 }
             ]
         },
@@ -317,7 +317,7 @@
                             "feature_description": "Learn two spells from any class's spell list."
                         }
                     ],
-                    "image_path": "150px-Class_Bard_College_of_Lore_Badge_Icon.png"
+                    "image_path": "160px-Class_Bard_College_of_Lore_Badge_Icon.png"
                 },
                 {
                     "name": "College of Valour",
@@ -334,7 +334,7 @@
                             "feature_description": "You can attack twice, instead of once, whenever you take the Attack action on your turn."
                         }
                     ],
-                    "image_path": "150px-Class_Bard_College_of_Valour_Badge_Icon.png"
+                    "image_path": "160px-Class_Bard_College_of_Valour_Badge_Icon.png"
                 },
                 {
                     "name": "College of Swords",
@@ -356,7 +356,7 @@
                             "feature_description": "You can attack twice, instead of once, whenever you take the Attack action on your turn."
                         }
                     ],
-                    "image_path": "150px-Class_Bard_College_of_Swords_Badge_Icon.png"
+                    "image_path": "160px-Class_Bard_College_of_Swords_Badge_Icon.png"
                 }
             ]
         },
@@ -518,7 +518,7 @@
                             "feature_description": "Your weapon attacks deal extra radiant damage."
                         }
                     ],
-                    "image_path": "150px-Class_Cleric_Life_Badge_Icon.png"
+                    "image_path": "160px-Class_Cleric_Life_Badge_Icon.png"
                 },
                 {
                     "name": "Light",
@@ -545,7 +545,7 @@
                             "feature_description": "Add your Wisdom modifier to the damage you deal with Cleric cantrips."
                         }
                     ],
-                    "image_path": "150px-Class_Cleric_Light_Badge_Icon.png"
+                    "image_path": "160px-Class_Cleric_Light_Badge_Icon.png"
                 },
                 {
                     "name": "Trickery",
@@ -572,7 +572,7 @@
                             "feature_description": "Your weapon attacks deal extra poison damage."
                         }
                     ],
-                    "image_path": "150px-Class_Cleric_Trickery_Badge_Icon.png"
+                    "image_path": "160px-Class_Cleric_Trickery_Badge_Icon.png"
                 },
                 {
                     "name": "Knowledge",
@@ -599,7 +599,7 @@
                             "feature_description": "Add your Wisdom modifier to the damage you deal with Cleric cantrips."
                         }
                     ],
-                    "image_path": "150px-Class_Cleric_Knowledge_Badge_Icon.png"
+                    "image_path": "160px-Class_Cleric_Knowledge_Badge_Icon.png"
                 },
                 {
                     "name": "Nature",
@@ -626,7 +626,7 @@
                             "feature_description": "Your weapon attacks deal extra elemental damage (fire, cold, lightning, or acid)."
                         }
                     ],
-                    "image_path": "150px-Class_Cleric_Nature_Badge_Icon.png"
+                    "image_path": "160px-Class_Cleric_Nature_Badge_Icon.png"
                 },
                 {
                     "name": "Tempest",
@@ -653,7 +653,7 @@
                             "feature_description": "Your weapon attacks deal extra thunder damage."
                         }
                     ],
-                    "image_path": "150px-Class_Cleric_Tempest_Badge_Icon.png"
+                    "image_path": "160px-Class_Cleric_Tempest_Badge_Icon.png"
                 },
                 {
                     "name": "War",
@@ -680,7 +680,7 @@
                             "feature_description": "Your weapon attacks deal extra damage of the weapon's type (e.g., slashing, piercing)."
                         }
                     ],
-                    "image_path": "150px-Class_Cleric_War_Badge_Icon.png"
+                    "image_path": "160px-Class_Cleric_War_Badge_Icon.png"
                 }
             ]
         },
@@ -838,7 +838,7 @@
                             "feature_description": "Immunity to poison and disease, cannot be charmed or frightened by elementals or fey."
                         }
                     ],
-                    "image_path": "150px-Class_Druid_Circle_of_the_Land_Badge_Icon.png"
+                    "image_path": "160px-Class_Druid_Circle_of_the_Land_Badge_Icon.png"
                 },
                 {
                     "name": "Circle of the Moon",
@@ -865,7 +865,7 @@
                             "feature_description": "Gain the ability to transform into elementals."
                         }
                     ],
-                    "image_path": "150px-Class_Druid_Circle_of_the_Moon_Badge_Icon.png"
+                    "image_path": "160px-Class_Druid_Circle_of_the_Moon_Badge_Icon.png"
                 },
                 {
                     "name": "Circle of the Spores",
@@ -892,7 +892,7 @@
                             "feature_description": "Release spores in a 10-foot cube to damage enemies and create difficult terrain."
                         }
                     ],
-                    "image_path": "150px-Class_Druid_Circle_of_the_Spores_Badge_Icon.png"
+                    "image_path": "160px-Class_Druid_Circle_of_the_Spores_Badge_Icon.png"
                 }
             ]
         },
@@ -997,7 +997,7 @@
                             "feature_description": "Your Superiority Dice become d10s. Choose 2 additional Manoeuvres."
                         }
                     ],
-                    "image_path": "150px-Class_Fighter_Battle_Master_Badge_Icon.png"
+                    "image_path": "160px-Class_Fighter_Battle_Master_Badge_Icon.png"
                 },
                 {
                     "name": "Eldritch Knight",
@@ -1019,7 +1019,7 @@
                             "feature_description": "When you hit a creature with a weapon attack, it has disadvantage on saving throws against spells you cast until the end of your next turn."
                         }
                     ],
-                    "image_path": "150px-Class_Fighter_Eldritch_Knight_Badge_Icon.png"
+                    "image_path": "160px-Class_Fighter_Eldritch_Knight_Badge_Icon.png"
                 },
                 {
                     "name": "Champion",
@@ -1041,7 +1041,7 @@
                             "feature_description": "Choose an additional Fighting Style."
                         }
                     ],
-                    "image_path": "150px-Class_Fighter_Champion_Badge_Icon.png"
+                    "image_path": "160px-Class_Fighter_Champion_Badge_Icon.png"
                 }
             ]
         },
@@ -1158,7 +1158,7 @@
                             "feature_description": "Further mastery of elemental spells and abilities."
                         }
                     ],
-                    "image_path": "150px-Class_Monk_Way_of_the_Four_Elements_Badge_Icon.png"
+                    "image_path": "160px-Class_Monk_Way_of_the_Four_Elements_Badge_Icon.png"
                 },
                 {
                     "name": "Way of the Open Hand",
@@ -1180,7 +1180,7 @@
                             "feature_description": "Achieve a state of peace that grants you various defensive benefits."
                         }
                     ],
-                    "image_path": "150px-Class_Monk_Way_of_the_Open_Hand_Badge_Icon.png"
+                    "image_path": "160px-Class_Monk_Way_of_the_Open_Hand_Badge_Icon.png"
                 },
                 {
                     "name": "Way of Shadow",
@@ -1202,7 +1202,7 @@
                             "feature_description": "Unleash powerful shadow-based attacks that deal devastating damage."
                         }
                     ],
-                    "image_path": "150px-Class_Monk_Way_of_Shadow_Badge_Icon.png"
+                    "image_path": "160px-Class_Monk_Way_of_Shadow_Badge_Icon.png"
                 }
             ]
         },
@@ -1324,7 +1324,7 @@
                             "feature_description": "You and your allies within the aura take less damage from spells."
                         }
                     ],
-                    "image_path": "150px-Class_Paladin_Oath_of_the_Ancients_Badge_Icon.png"
+                    "image_path": "160px-Class_Paladin_Oath_of_the_Ancients_Badge_Icon.png"
                 },
                 {
                     "name": "Oath of Devotion",
@@ -1346,7 +1346,7 @@
                             "feature_description": "You and your allies within the aura are immune to being charmed."
                         }
                     ],
-                    "image_path": "150px-Class_Paladin_Oath_of_Devotion_Badge_Icon.png"
+                    "image_path": "160px-Class_Paladin_Oath_of_Devotion_Badge_Icon.png"
                 },
                 {
                     "name": "Oath of Vengeance",
@@ -1368,7 +1368,7 @@
                             "feature_description": "When you hit a creature with an opportunity attack, you can move up to half your speed after the attack."
                         }
                     ],
-                    "image_path": "150px-Class_Paladin_Oath_of_Vengeance_Badge_Icon.png"
+                    "image_path": "160px-Class_Paladin_Oath_of_Vengeance_Badge_Icon.png"
                 },
                 {
                     "name": "Oathbreaker",
@@ -1390,7 +1390,7 @@
                             "feature_description": "You and your undead allies within the aura deal additional necrotic damage."
                         }
                     ],
-                    "image_path": "150px-Class_Paladin_Oathbreaker_Badge_Icon.png"
+                    "image_path": "160px-Class_Paladin_Oathbreaker_Badge_Icon.png"
                 }
             ]
         },
@@ -1510,7 +1510,7 @@
                             "feature_description": "Choose one: Perform a ranged volley or a melee whirlwind attack to hit multiple enemies."
                         }
                     ],
-                    "image_path": "150px-Class_Ranger_Hunter_Badge_Icon.png"
+                    "image_path": "160px-Class_Ranger_Hunter_Badge_Icon.png"
                 },
                 {
                     "name": "Beast Master",
@@ -1532,7 +1532,7 @@
                             "feature_description": "Your beast companion can make two attacks when you command it to attack."
                         }
                     ],
-                    "image_path": "150px-Class_Ranger_Beast_Master_Badge_Icon.png"
+                    "image_path": "160px-Class_Ranger_Beast_Master_Badge_Icon.png"
                 },
                 {
                     "name": "Gloom Stalker",
@@ -1554,7 +1554,7 @@
                             "feature_description": "If you miss with an attack, you can make another attack as part of the same action."
                         }
                     ],
-                    "image_path": "150px-Class_Ranger_Gloom_Stalker_Badge_Icon.png"
+                    "image_path": "160px-Class_Ranger_Gloom_Stalker_Badge_Icon.png"
                 }
             ]
         },
@@ -1659,7 +1659,7 @@
                             "feature_description": "You have Advantage on Stealth checks when moving at half speed."
                         }
                     ],
-                    "image_path": "150px-Class_Rogue_Thief_Badge_Icon.png"
+                    "image_path": "160px-Class_Rogue_Thief_Badge_Icon.png"
                 },
                 {
                     "name": "Arcane Trickster",
@@ -1681,7 +1681,7 @@
                             "feature_description": "If you are hidden from a creature when you cast a spell on it, the creature has Disadvantage on its saving throw."
                         }
                     ],
-                    "image_path": "150px-Class_Rogue_Arcane_Trickster_Badge_Icon.png"
+                    "image_path": "160px-Class_Rogue_Arcane_Trickster_Badge_Icon.png"
                 },
                 {
                     "name": "Assassin",
@@ -1708,7 +1708,7 @@
                             "feature_description": "You can create a false identity and establish cover with no suspicion."
                         }
                     ],
-                    "image_path": "150px-Class_Rogue_Assassin_Badge_Icon.png"
+                    "image_path": "160px-Class_Rogue_Assassin_Badge_Icon.png"
                 }
             ]
         },
@@ -1855,7 +1855,7 @@
                             "feature_description": "You gain more control over your wild magic surges."
                         }
                     ],
-                    "image_path": "150px-Class_Sorcerer_Wild_Magic_Badge_Icon.png"
+                    "image_path": "160px-Class_Sorcerer_Wild_Magic_Badge_Icon.png"
                 },
                 {
                     "name": "Draconic Bloodline",
@@ -1877,7 +1877,7 @@
                             "feature_description": "You can sprout dragon wings and gain a flying speed equal to your current speed."
                         }
                     ],
-                    "image_path": "150px-Class_Sorcerer_Draconic_Bloodline_Badge_Icon.png"
+                    "image_path": "160px-Class_Sorcerer_Draconic_Bloodline_Badge_Icon.png"
                 },
                 {
                     "name": "Storm Sorcery",
@@ -1899,7 +1899,7 @@
                             "feature_description": "When hit by a melee attack, you can use your reaction to deal lightning damage to the attacker."
                         }
                     ],
-                    "image_path": "150px-Class_Sorcerer_Storm_Sorcery_Badge_Icon.png"
+                    "image_path": "160px-Class_Sorcerer_Storm_Sorcery_Badge_Icon.png"
                 }
             ]
         },
@@ -2046,7 +2046,7 @@
                             "feature_description": "Gain resistance to a damage type of your choice at the start of each short or long rest."
                         }
                     ],
-                    "image_path": "150px-Class_Warlock_The_Fiend_Badge_Icon.png"
+                    "image_path": "160px-Class_Warlock_The_Fiend_Badge_Icon.png"
                 },
                 {
                     "name": "The Great Old One",
@@ -2068,7 +2068,7 @@
                             "feature_description": "Gain resistance to psychic damage and reflect it back to the attacker."
                         }
                     ],
-                    "image_path": "150px-Class_Warlock_The_Great_Old_One_Badge_Icon.png"
+                    "image_path": "160px-Class_Warlock_The_Great_Old_One_Badge_Icon.png"
                 },
                 {
                     "name": "The Archfey",
@@ -2090,7 +2090,7 @@
                             "feature_description": "Become immune to being charmed and reflect it back to the attacker."
                         }
                     ],
-                    "image_path": "150px-Class_Warlock_The_Archfey_Badge_Icon.png"
+                    "image_path": "160px-Class_Warlock_The_Archfey_Badge_Icon.png"
                 }
             ]
         },
@@ -2242,7 +2242,7 @@
                             "feature_description": "Your abjuration spells are more effective and provide greater protection."
                         }
                     ],
-                    "image_path": "150px-Class_Wizard_Abjuration_School_Badge_Icon.png"
+                    "image_path": "160px-Class_Wizard_Abjuration_School_Badge_Icon.png"
                 },
                 {
                     "name": "Evocation School",
@@ -2269,7 +2269,7 @@
                             "feature_description": "Add your Intelligence modifier to the damage rolls of your Evocation spells."
                         }
                     ],
-                    "image_path": "150px-Class_Wizard_Evocation_School_Badge_Icon.png"
+                    "image_path": "160px-Class_Wizard_Evocation_School_Badge_Icon.png"
                 },
                 {
                     "name": "Necromancy School",
@@ -2296,7 +2296,7 @@
                             "feature_description": "Gain resistance to necrotic damage, and your hit point maximum can't be reduced."
                         }
                     ],
-                    "image_path": "150px-Class_Wizard_Necromancy_School_Badge_Icon.png"
+                    "image_path": "160px-Class_Wizard_Necromancy_School_Badge_Icon.png"
                 },
                 {
                     "name": "Conjuration School",
@@ -2323,7 +2323,7 @@
                             "feature_description": "Your concentration can't be broken when you take damage."
                         }
                     ],
-                    "image_path": "150px-Class_Wizard_Conjuration_School_Badge_Icon.png"
+                    "image_path": "160px-Class_Wizard_Conjuration_School_Badge_Icon.png"
                 },
                 {
                     "name": "Enchantment School",
@@ -2350,7 +2350,7 @@
                             "feature_description": "You can target two creatures with a single enchantment spell."
                         }
                     ],
-                    "image_path": "150px-Class_Wizard_Enchantment_School_Badge_Icon.png"
+                    "image_path": "160px-Class_Wizard_Enchantment_School_Badge_Icon.png"
                 },
                 {
                     "name": "Divination School",
@@ -2377,7 +2377,7 @@
                             "feature_description": "Gain one of several divination-related abilities, such as darkvision or see invisibility."
                         }
                     ],
-                    "image_path": "150px-Class_Wizard_Divination_School_Badge_Icon.png"
+                    "image_path": "160px-Class_Wizard_Divination_School_Badge_Icon.png"
                 },
                 {
                     "name": "Illusion School",
@@ -2404,7 +2404,7 @@
                             "feature_description": "Turn an illusion into reality for a short time."
                         }
                     ],
-                    "image_path": "150px-Class_Wizard_Illusion_School_Badge_Icon.png"
+                    "image_path": "160px-Class_Wizard_Illusion_School_Badge_Icon.png"
                 },
                 {
                     "name": "Transmutation School",
@@ -2431,7 +2431,7 @@
                             "feature_description": "You can transform your body to resist damage or avoid attacks."
                         }
                     ],
-                    "image_path": "150px-Class_Wizard_Transmutation_School_Badge_Icon.png"
+                    "image_path": "160px-Class_Wizard_Transmutation_School_Badge_Icon.png"
                 }
             ]
         }
