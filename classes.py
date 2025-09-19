@@ -2,10 +2,19 @@ import json
 import re
 import sqlite3
 from collections import defaultdict
-from typing import Dict, Iterable, List, Mapping, MutableMapping, Optional, Set
+from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Optional, Set, TYPE_CHECKING
 
-import requests
-from bs4 import BeautifulSoup, Tag
+try:  # Optional dependency – the script can operate without network scraping support.
+    import requests  # type: ignore
+    from bs4 import BeautifulSoup  # type: ignore
+except ModuleNotFoundError:  # pragma: no cover - gracefully degrade when requests/bs4 are missing
+    requests = None
+    BeautifulSoup = None
+
+if TYPE_CHECKING:  # pragma: no cover - help static type checkers without incurring a runtime dependency
+    from bs4 import Tag  # type: ignore
+else:
+    Tag = Any  # type: ignore
 
 def extract_level_from_text(text: str) -> Optional[int]:
     """Return the first integer found in the provided text."""
@@ -83,6 +92,10 @@ def fetch_class_spells(class_names: Iterable[str]) -> Dict[str, Dict[int, Set[st
     does not have external network access) an empty mapping is returned so that
     the rest of the import pipeline can still run.
     """
+
+    if requests is None or BeautifulSoup is None:
+        print("Warning: skipping class spell scraping because requests/bs4 are not installed.")
+        return {}
 
     try:
         response = requests.get(
@@ -177,7 +190,6 @@ CREATE TABLE Class_Progression (
     proficiency_bonus TEXT,
     features TEXT,
     rage_charges INTEGER,
-@@ -60,83 +198,99 @@ CREATE TABLE Class_Progression (
     invocations_known INTEGER,
     FOREIGN KEY(class_name) REFERENCES Classes(name)
 )
@@ -229,25 +241,83 @@ for class_data in data['classes']:
     class_name = class_data['name']
 
     # Insert class progression data
+    progression_columns = [row[1] for row in c.execute('PRAGMA table_info(Class_Progression)')]
+    desired_progression_columns = [
+        'class_name',
+        'level',
+        'proficiency_bonus',
+        'features',
+        'rage_charges',
+        'rage_damage',
+        'cantrips_known',
+        'spells_known',
+        'spell_slots_1st',
+        'spell_slots_2nd',
+        'spell_slots_3rd',
+        'spell_slots_4th',
+        'spell_slots_5th',
+        'spell_slots_6th',
+        'sorcery_points',
+        'sneak_attack_damage',
+        'bardic_inspiration_charges',
+        'channel_divinity_charges',
+        'lay_on_hands_charges',
+        'ki_points',
+        'unarmoured_movement_bonus',
+        'martial_arts_damage',
+        'spell_slots_per_level',
+        'invocations_known',
+    ]
+
     for progression in class_data['class_progression']:
-        c.execute('''
-        INSERT INTO Class_Progression (class_name, level, proficiency_bonus, features, rage_charges, rage_damage,
-                                       cantrips_known, spells_known, spell_slots_1st, spell_slots_2nd, spell_slots_3rd,
-                                       spell_slots_4th, spell_slots_5th, spell_slots_6th, sorcery_points, sneak_attack_damage,
-                                       bardic_inspiration_charges, channel_divinity_charges, lay_on_hands_charges, ki_points,
-                                       unarmoured_movement_bonus, martial_arts_damage, spell_slots_per_level, invocations_known)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (class_name, progression['level'], progression['proficiency_bonus'], progression['features'],
-              progression.get('rage_charges'), progression.get('rage_damage'),
-              progression.get('cantrips_known'), progression.get('spells_known'),
-              progression.get('spell_slots_1st'), progression.get('spell_slots_2nd'),
-              progression.get('spell_slots_3rd'), progression.get('spell_slots_4th'),
-              progression.get('spell_slots_5th'), progression.get('spell_slots_6th'),
-              progression.get('sorcery_points'), progression.get('sneak_attack_damage'),
-              progression.get('bardic_inspiration_charges'), progression.get('channel_divinity_charges'),
-              progression.get('lay_on_hands_charges'), progression.get('ki_points'),
-              progression.get('unarmoured_movement_bonus'), progression.get('martial_arts_damage'),
-              progression.get('spell_slots_per_level'), progression.get('invocations_known')))
+        progression_values = {
+            'class_name': class_name,
+            'level': progression['level'],
+            'proficiency_bonus': progression['proficiency_bonus'],
+            'features': progression['features'],
+            'rage_charges': progression.get('rage_charges'),
+            'rage_damage': progression.get('rage_damage'),
+            'cantrips_known': progression.get('cantrips_known'),
+            'spells_known': progression.get('spells_known'),
+            'spell_slots_1st': progression.get('spell_slots_1st'),
+            'spell_slots_2nd': progression.get('spell_slots_2nd'),
+            'spell_slots_3rd': progression.get('spell_slots_3rd'),
+            'spell_slots_4th': progression.get('spell_slots_4th'),
+            'spell_slots_5th': progression.get('spell_slots_5th'),
+            'spell_slots_6th': progression.get('spell_slots_6th'),
+            'sorcery_points': progression.get('sorcery_points'),
+            'sneak_attack_damage': progression.get('sneak_attack_damage'),
+            'bardic_inspiration_charges': progression.get('bardic_inspiration_charges'),
+            'channel_divinity_charges': progression.get('channel_divinity_charges'),
+            'lay_on_hands_charges': progression.get('lay_on_hands_charges'),
+            'ki_points': progression.get('ki_points'),
+            'unarmoured_movement_bonus': progression.get('unarmoured_movement_bonus'),
+            'martial_arts_damage': progression.get('martial_arts_damage'),
+            'spell_slots_per_level': progression.get('spell_slots_per_level'),
+            'invocations_known': progression.get('invocations_known'),
+        }
+
+        columns_to_insert = [
+            column for column in desired_progression_columns if column in progression_columns
+        ]
+        placeholders = ', '.join(['?'] * len(columns_to_insert))
+        column_clause = ', '.join(columns_to_insert)
+        values = [progression_values[column] for column in columns_to_insert]
+
+        c.execute(
+            f'''
+            INSERT INTO Class_Progression ({column_clause})
+            VALUES ({placeholders})
+            ''',
+            values,
+        )
+
+        learned_spells = class_spells_mapping.get(class_name, {}).get(progression['level'], set())
+        for spell_name in sorted(learned_spells):
+            c.execute('''
+            INSERT INTO Class_Spells_Learned (class_name, level, spell_name)
+            VALUES (?, ?, ?)
+            ''', (class_name, progression['level'], spell_name))
 
         learned_spells = class_spells_mapping.get(class_name, {}).get(progression['level'], set())
         for spell_name in sorted(learned_spells):
