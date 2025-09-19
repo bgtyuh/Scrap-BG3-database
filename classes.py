@@ -190,24 +190,6 @@ CREATE TABLE Class_Progression (
     proficiency_bonus TEXT,
     features TEXT,
     rage_charges INTEGER,
-    rage_damage INTEGER,
-    cantrips_known INTEGER,
-    spells_known INTEGER,
-    spell_slots_1st INTEGER,
-    spell_slots_2nd INTEGER,
-    spell_slots_3rd INTEGER,
-    spell_slots_4th INTEGER,
-    spell_slots_5th INTEGER,
-    spell_slots_6th INTEGER,
-    sorcery_points INTEGER,
-    sneak_attack_damage TEXT,
-    bardic_inspiration_charges INTEGER,
-    channel_divinity_charges INTEGER,
-    lay_on_hands_charges INTEGER,
-    ki_points INTEGER,
-    unarmoured_movement_bonus TEXT,
-    martial_arts_damage TEXT,
-    spell_slots_per_level TEXT,
     invocations_known INTEGER,
     FOREIGN KEY(class_name) REFERENCES Classes(name)
 )
@@ -329,6 +311,13 @@ for class_data in data['classes']:
             ''',
             values,
         )
+
+        learned_spells = class_spells_mapping.get(class_name, {}).get(progression['level'], set())
+        for spell_name in sorted(learned_spells):
+            c.execute('''
+            INSERT INTO Class_Spells_Learned (class_name, level, spell_name)
+            VALUES (?, ?, ?)
+            ''', (class_name, progression['level'], spell_name))
 
         learned_spells = class_spells_mapping.get(class_name, {}).get(progression['level'], set())
         for spell_name in sorted(learned_spells):
