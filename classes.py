@@ -1,349 +1,168 @@
-import json
-import re
-import sqlite3
-from collections import defaultdict
-from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Optional, Set, TYPE_CHECKING
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-try:  # Optional dependency – the script can operate without network scraping support.
-    import requests  # type: ignore
-    from bs4 import BeautifulSoup  # type: ignore
-except ModuleNotFoundError:  # pragma: no cover - gracefully degrade when requests/bs4 are missing
-    requests = None
-    BeautifulSoup = None
+import json, os, re, sqlite3, sys
+from typing import List, Tuple, Set
+import requests
+from bs4 import BeautifulSoup
 
-if TYPE_CHECKING:  # pragma: no cover - help static type checkers without incurring a runtime dependency
-    from bs4 import Tag  # type: ignore
-else:
-    Tag = Any  # type: ignore
+# --------- CONFIG CHEMINS (mets ceux que TU utilises en vrai) ----------
+JSON_PATH = os.environ.get("BG3_JSON", "data/json/classes.json")           # <-- racine
+DB_PATH   = os.environ.get("BG3_DB",   "data/databases/bg3_classes.db")         # <-- racine
+# ----------------------------------------------------------------------
 
-def extract_level_from_text(text: str) -> Optional[int]:
-    """Return the first integer found in the provided text."""
+CLASS_PAGE_SLUG = {
+    "Bard": "Bard", "Cleric": "Cleric", "Druid": "Druid",
+    "Paladin": "Paladin", "Ranger": "Ranger",
+    "Sorcerer": "Sorcerer", "Warlock": "Warlock", "Wizard": "Wizard",
+}
 
-    match = re.search(r"(\d+)", text)
-    if match:
+FULL, HALF, NONE = "full", "half", "none"
+CLASS_CASTER_TYPE = {
+    "Bard": FULL, "Cleric": FULL, "Druid": FULL, "Sorcerer": FULL, "Wizard": FULL, "Warlock": FULL,
+    "Paladin": HALF, "Ranger": HALF,
+    "Barbarian": NONE, "Fighter": NONE, "Monk": NONE, "Rogue": NONE,
+}
+
+FULL_MAP = {0:1, 1:1, 2:3, 3:5, 4:7, 5:9, 6:11}
+HALF_MAP = {0:2, 1:2, 2:5, 3:9}
+
+def char_level_for(class_name: str, spell_level: int) -> int:
+    ctype = CLASS_CASTER_TYPE.get(class_name, NONE)
+    if ctype == FULL: return FULL_MAP.get(spell_level, 99)
+    if ctype == HALF: return HALF_MAP.get(spell_level, 99)
+    return 99
+
+def list_url_for_class(class_name: str) -> str:
+    slug = CLASS_PAGE_SLUG.get(class_name)
+    if not slug:
+        raise KeyError(f"Aucune page 'List_of_*_spells' pour {class_name}")
+    return f"https://bg3.wiki/wiki/List_of_{slug}_spells"
+
+def robust_text(el) -> str:
+    return el.get_text(" ", strip=True) if hasattr(el, "get_text") else str(el).strip()
+
+def fetch_class_spell_list(class_name: str) -> List[Tuple[str, int]]:
+    url = list_url_for_class(class_name)
+    resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=30)
+    resp.raise_for_status()
+    soup = BeautifulSoup(resp.text, "html.parser")
+
+    results: List[Tuple[str, int]] = []
+    tables = soup.find_all("table")
+    if not tables:
+        print(f"[WARN] {class_name}: aucune table trouvée sur {url}")
+        return results
+
+    for table in tables:
+        headers = [robust_text(th).lower() for th in table.find_all("th")]
+        if not headers: 
+            continue
+        # on tolère variations: "name"/"spell", "lvl"/"level"
         try:
-            return int(match.group(1))
-        except ValueError:
-            return None
-    return None
-
-
-def parse_spell_table(table: Tag) -> Mapping[int, Set[str]]:
-    """Parse a spell progression table and return spells grouped by level.
-
-    The parser is intentionally defensive so that it can cope with minor
-    structural differences between class pages. A row is considered valid when
-    the first column contains a level indicator and at least one of the
-    remaining columns mentions spells (hyperlinks are preferred but plain text
-    entries separated by commas are also supported).
-    """
-
-    rows = table.find_all("tr")
-    if not rows:
-        return {}
-
-    header_cells = rows[0].find_all(["th", "td"])
-    header_labels = [cell.get_text(" ", strip=True).lower() for cell in header_cells]
-    if not header_labels:
-        return {}
-
-    if "level" not in header_labels[0]:
-        return {}
-
-    if not any("spell" in label for label in header_labels[1:]):
-        return {}
-
-    spells_by_level: MutableMapping[int, Set[str]] = defaultdict(set)
-    for row in rows[1:]:
-        cells = row.find_all(["td", "th"])
-        if not cells:
+            name_idx = next(i for i,h in enumerate(headers) if ("spell" in h) or ("name" in h))
+            lvl_idx  = next(i for i,h in enumerate(headers) if ("level" in h) or (re.search(r"\blvl\b", h)))
+        except StopIteration:
             continue
 
-        level_text = cells[0].get_text(" ", strip=True)
-        level = extract_level_from_text(level_text)
-        if level is None:
-            continue
-
-        found_spells: List[str] = []
-        for cell in cells[1:]:
-            link_spells = [a.get_text(strip=True) for a in cell.find_all("a") if a.get_text(strip=True)]
-            if link_spells:
-                found_spells.extend(link_spells)
+        for tr in table.find_all("tr"):
+            tds = tr.find_all("td")
+            if len(tds) <= max(name_idx, lvl_idx):
+                continue
+            name_cell = tds[name_idx]
+            link = name_cell.find("a")
+            spell_name = robust_text(link) if link and robust_text(link) else robust_text(name_cell)
+            if not spell_name:
                 continue
 
-            cell_text = cell.get_text(" ", strip=True)
-            if cell_text:
-                parts = [part.strip() for part in re.split(r",|/|\n", cell_text) if part.strip()]
-                found_spells.extend(parts)
-
-        for spell in found_spells:
-            spells_by_level[level].add(spell)
-
-    return {level: spells for level, spells in spells_by_level.items() if spells}
-
-
-def fetch_class_spells(class_names: Iterable[str]) -> Dict[str, Dict[int, Set[str]]]:
-    """Retrieve the spells learned by each class from the BG3 wiki.
-
-    The function scrapes the https://bg3.wiki/wiki/Classes page and searches for
-    spell progression tables that are scoped under headings matching a known
-    class name. A best effort is made to gracefully handle structural changes.
-    When the remote resource is not reachable (for example because the runtime
-    does not have external network access) an empty mapping is returned so that
-    the rest of the import pipeline can still run.
-    """
-
-    if requests is None or BeautifulSoup is None:
-        print("Warning: skipping class spell scraping because requests/bs4 are not installed.")
-        return {}
-
-    try:
-        response = requests.get(
-            "https://bg3.wiki/wiki/Classes",
-            headers={"User-Agent": "Mozilla/5.0"},
-            timeout=30,
-        )
-        response.raise_for_status()
-    except requests.RequestException as exc:  # pragma: no cover - network best effort
-        print(f"Warning: unable to fetch class spell data from the wiki: {exc}")
-        return {}
-
-    soup = BeautifulSoup(response.text, "html.parser")
-    content_root = soup.find("div", id="mw-content-text")
-    if not content_root:
-        return {}
-
-    known_classes = {name.strip().lower() for name in class_names}
-    spells_by_class: Dict[str, Dict[int, Set[str]]] = {}
-    current_class: Optional[str] = None
-
-    for element in content_root.children:
-        if getattr(element, "name", None) in {"h2", "h3", "h4"}:
-            heading_text = element.get_text(" ", strip=True)
-            key = heading_text.strip().lower()
-            if key in known_classes:
-                current_class = heading_text.strip()
-                spells_by_class.setdefault(current_class, {})
+            lvl_text = robust_text(tds[lvl_idx])
+            if re.search(r"cantrip", lvl_text, re.I):
+                spell_level = 0
             else:
-                current_class = None
+                m = re.search(r"\d+", lvl_text)
+                if not m:
+                    # quelques pages mettent juste "—" pour cantrip; on essaie encore:
+                    if lvl_text.strip() in {"—", "-", ""}:
+                        spell_level = 0
+                    else:
+                        continue
+                else:
+                    spell_level = int(m.group(0))
+
+            results.append((spell_name, spell_level))
+
+    # dédoublonner
+    dedup: Set[Tuple[str,int]] = set(results)
+    return sorted(dedup, key=lambda x: (x[1], x[0].lower()))
+
+def main():
+    # 1) Charger classes
+    if not os.path.exists(JSON_PATH):
+        print(f"[ERREUR] JSON introuvable: {JSON_PATH}. Modifie JSON_PATH.")
+        sys.exit(1)
+    with open(JSON_PATH, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    class_names = [c["name"] for c in data.get("classes", [])]
+
+    # 2) DB
+    os.makedirs(os.path.dirname(DB_PATH) or ".", exist_ok=True)
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS Class_Spells_Learned(
+        class_name TEXT,
+        level INTEGER,
+        spell_name TEXT,
+        FOREIGN KEY(class_name) REFERENCES Classes(name)
+    )""")
+    # on nettoie pour un import propre
+    c.execute("DELETE FROM Class_Spells_Learned")
+    conn.commit()
+
+    # 3) Scrape
+    total = 0
+    for cls in class_names:
+        ctype = CLASS_CASTER_TYPE.get(cls, NONE)
+        if ctype == NONE:
+            print(f"[SKIP] {cls}: non-caster dans ce script.")
             continue
 
-        if not current_class or getattr(element, "name", None) != "table":
+        try:
+            pairs = fetch_class_spell_list(cls)  # (spell_name, spell_level)
+        except Exception as e:
+            print(f"[WARN] {cls}: échec scraping: {e}")
             continue
 
-        parsed_table = parse_spell_table(element)
-        if not parsed_table:
+        if not pairs:
+            print(f"[WARN] {cls}: 0 sort trouvé. Vérifie la page et/ou l’HTML.")
             continue
 
-        class_store = spells_by_class.setdefault(current_class, {})
-        for level, spells in parsed_table.items():
-            class_store.setdefault(level, set()).update(spells)
+        rows = []
+        for spell_name, spell_level in pairs:
+            lvl = char_level_for(cls, spell_level)
+            if lvl >= 99:
+                continue
+            rows.append((cls, lvl, spell_name))
 
-    # Remove classes for which no spells were discovered
-    return {
-        class_name: {level: spells for level, spells in sorted(levels.items())}
-        for class_name, levels in spells_by_class.items()
-        if any(levels.values())
-    }
+        if not rows:
+            print(f"[WARN] {cls}: 0 ligne à insérer après mapping (peut arriver si niveaux de sort hors plage).")
+            continue
 
-
-# Load the JSON from the updated file
-with open('data/json/classes.json', 'r') as file:
-    data = json.load(file)
-    class_names = [class_entry['name'] for class_entry in data.get('classes', [])]
-
-
-class_spells_mapping = fetch_class_spells(class_names)
-
-# Connect to SQLite
-conn = sqlite3.connect('data/databases/bg3_classes.db')
-c = conn.cursor()
-
-# Drop tables if they already exist
-c.execute('DROP TABLE IF EXISTS Classes')
-c.execute('DROP TABLE IF EXISTS Class_Progression')
-c.execute('DROP TABLE IF EXISTS Subclasses')
-c.execute('DROP TABLE IF EXISTS Subclasses_Features')
-c.execute('DROP TABLE IF EXISTS Class_Spells_Learned')
-
-# Create the tables
-c.execute('''
-CREATE TABLE Classes (
-    name TEXT PRIMARY KEY,
-    description TEXT,
-    hit_points_at_level1 TEXT,
-    hit_points_on_level_up TEXT,
-    key_abilities TEXT,
-    saving_throw_proficiencies TEXT,
-    equipment_proficiencies TEXT,
-    skill_proficiencies TEXT,
-    spellcasting_ability TEXT,
-    starting_equipment TEXT,
-    image_path TEXT
-)
-''')
-
-c.execute('''
-CREATE TABLE Class_Progression (
-    class_name TEXT,
-    level INTEGER,
-    proficiency_bonus TEXT,
-    features TEXT,
-    rage_charges INTEGER,
-    invocations_known INTEGER,
-    FOREIGN KEY(class_name) REFERENCES Classes(name)
-)
-''')
-
-c.execute('''
-CREATE TABLE Subclasses (
-    class_name TEXT,
-    name TEXT,
-    description TEXT,
-    image_path TEXT,
-    FOREIGN KEY(class_name) REFERENCES Classes(name)
-)
-''')
-
-c.execute('''
-CREATE TABLE Subclasses_Features (
-    subclass_name TEXT,
-    level INTEGER,
-    feature_name TEXT,
-    feature_description TEXT,
-    FOREIGN KEY(subclass_name) REFERENCES Subclasses(name)
-)
-''')
-
-c.execute('''
-CREATE TABLE Class_Spells_Learned (
-    class_name TEXT,
-    level INTEGER,
-    spell_name TEXT,
-    FOREIGN KEY(class_name) REFERENCES Classes(name)
-)
-''')
-
-# Insert data into tables
-for class_data in data['classes']:
-    # Insert class data
-    c.execute('''
-    INSERT INTO Classes (name, description, hit_points_at_level1, hit_points_on_level_up, key_abilities,
-                         saving_throw_proficiencies, equipment_proficiencies, skill_proficiencies, spellcasting_ability,
-                         starting_equipment, image_path)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (class_data['name'], class_data['description'], class_data['hit_points_at_level1'],
-          class_data['hit_points_on_level_up'], class_data['key_abilities'], class_data['saving_throw_proficiencies'],
-          class_data['equipment_proficiencies'], class_data['skill_proficiencies'],
-          class_data.get('spellcasting_ability', None),
-          class_data['starting_equipment'], class_data.get('image_path', None)))
-
-    class_name = class_data['name']
-
-    # Insert class progression data
-    progression_columns = [row[1] for row in c.execute('PRAGMA table_info(Class_Progression)')]
-    desired_progression_columns = [
-        'class_name',
-        'level',
-        'proficiency_bonus',
-        'features',
-        'rage_charges',
-        'rage_damage',
-        'cantrips_known',
-        'spells_known',
-        'spell_slots_1st',
-        'spell_slots_2nd',
-        'spell_slots_3rd',
-        'spell_slots_4th',
-        'spell_slots_5th',
-        'spell_slots_6th',
-        'sorcery_points',
-        'sneak_attack_damage',
-        'bardic_inspiration_charges',
-        'channel_divinity_charges',
-        'lay_on_hands_charges',
-        'ki_points',
-        'unarmoured_movement_bonus',
-        'martial_arts_damage',
-        'spell_slots_per_level',
-        'invocations_known',
-    ]
-
-    for progression in class_data['class_progression']:
-        progression_values = {
-            'class_name': class_name,
-            'level': progression['level'],
-            'proficiency_bonus': progression['proficiency_bonus'],
-            'features': progression['features'],
-            'rage_charges': progression.get('rage_charges'),
-            'rage_damage': progression.get('rage_damage'),
-            'cantrips_known': progression.get('cantrips_known'),
-            'spells_known': progression.get('spells_known'),
-            'spell_slots_1st': progression.get('spell_slots_1st'),
-            'spell_slots_2nd': progression.get('spell_slots_2nd'),
-            'spell_slots_3rd': progression.get('spell_slots_3rd'),
-            'spell_slots_4th': progression.get('spell_slots_4th'),
-            'spell_slots_5th': progression.get('spell_slots_5th'),
-            'spell_slots_6th': progression.get('spell_slots_6th'),
-            'sorcery_points': progression.get('sorcery_points'),
-            'sneak_attack_damage': progression.get('sneak_attack_damage'),
-            'bardic_inspiration_charges': progression.get('bardic_inspiration_charges'),
-            'channel_divinity_charges': progression.get('channel_divinity_charges'),
-            'lay_on_hands_charges': progression.get('lay_on_hands_charges'),
-            'ki_points': progression.get('ki_points'),
-            'unarmoured_movement_bonus': progression.get('unarmoured_movement_bonus'),
-            'martial_arts_damage': progression.get('martial_arts_damage'),
-            'spell_slots_per_level': progression.get('spell_slots_per_level'),
-            'invocations_known': progression.get('invocations_known'),
-        }
-
-        columns_to_insert = [
-            column for column in desired_progression_columns if column in progression_columns
-        ]
-        placeholders = ', '.join(['?'] * len(columns_to_insert))
-        column_clause = ', '.join(columns_to_insert)
-        values = [progression_values[column] for column in columns_to_insert]
-
-        c.execute(
-            f'''
-            INSERT INTO Class_Progression ({column_clause})
-            VALUES ({placeholders})
-            ''',
-            values,
+        c.executemany(
+            "INSERT INTO Class_Spells_Learned(class_name, level, spell_name) VALUES (?, ?, ?)",
+            rows
         )
+        conn.commit()
+        total += len(rows)
+        # petit résumé
+        lvls = {}
+        for _, lvl, _ in rows:
+            lvls[lvl] = lvls.get(lvl, 0) + 1
+        resume = ", ".join(f"L{l}: {n}" for l,n in sorted(lvls.items()))
+        print(f"[OK] {cls}: {len(rows)} sorts insérés ({resume})")
 
-        learned_spells = class_spells_mapping.get(class_name, {}).get(progression['level'], set())
-        for spell_name in sorted(learned_spells):
-            c.execute('''
-            INSERT INTO Class_Spells_Learned (class_name, level, spell_name)
-            VALUES (?, ?, ?)
-            ''', (class_name, progression['level'], spell_name))
+    print(f"[DONE] Total inséré: {total}. BDD: {os.path.abspath(DB_PATH)}")
+    conn.close()
 
-        learned_spells = class_spells_mapping.get(class_name, {}).get(progression['level'], set())
-        for spell_name in sorted(learned_spells):
-            c.execute('''
-            INSERT INTO Class_Spells_Learned (class_name, level, spell_name)
-            VALUES (?, ?, ?)
-            ''', (class_name, progression['level'], spell_name))
-
-    # Insert subclass data
-    for subclass in class_data.get('subclasses', []):
-        c.execute('''
-        INSERT INTO Subclasses (class_name, name, description, image_path)
-        VALUES (?, ?, ?, ?)
-        ''', (class_name, subclass['name'], subclass['description'], subclass['image_path']))
-
-        subclass_name = subclass['name']
-
-        # Insert subclass features
-        for feature in subclass['features']:
-            c.execute('''
-            INSERT INTO Subclasses_Features (subclass_name, level, feature_name, feature_description)
-            VALUES (?, ?, ?, ?)
-            ''', (subclass_name, feature['level'], feature['feature_name'], feature['feature_description']))
-
-# Commit the changes
-conn.commit()
-
-# Close the connection
-conn.close()
+if __name__ == "__main__":
+    main()
